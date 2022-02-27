@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  # app-react:
+  #   container_name: app-react
+  #   build: ./app-react
+  #   volumes:
+  #     - ./app-react:/usr/src/app:rw
+  #   command: tail -F anything
+  #   ports:
+  #     - 3000:3000
+  wbs-rest-aspnet:
+    container_name: wbs-rest-aspnet
+    build: ./wbs-rest-aspnet
+    # args:
+    #   user: $(id -u):$(id -g)
+    volumes:
+      - ./wbs-rest-aspnet:/usr/src/app:rw
+    command: tail -F anything
+    ports:
+      - "5043:5043"
+    depends_on:
+      - sqlserver
+  sqlserver:
+    container_name: sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    volumes:
+      - ./sqlserverdatavolume:/var/lib/mssqlql/data
+    environment:
+      SA_PASSWORD: "2wsxZAQ!GG"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express

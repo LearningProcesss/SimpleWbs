@@ -6,7 +6,7 @@ public class OutputProjectDto
 {
     public int ProjectId { get; set; }
     
-    public string Name { get; set; }
+    public string? Name { get; set; }
     
     public DateTime CreateOn { get; set; }
     // public int? CreateBy { get; set; }

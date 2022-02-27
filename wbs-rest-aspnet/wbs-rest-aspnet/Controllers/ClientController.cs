@@ -82,8 +82,8 @@ public class ClientController : ControllerBase
 
         Persistence.Models.Client model = new Persistence.Models.Client()
         {
-            Name = input.Name,
-            Vat = input.Vat
+            Name = input.Name!,
+            Vat = input.Vat!
         };
 
         context.Clients.Add(model);

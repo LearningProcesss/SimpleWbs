@@ -98,7 +98,7 @@ public class ProjectController : ControllerBase
 
         Persistence.Models.Project model = new Persistence.Models.Project()
         {
-            Name = input.Name
+            Name = input.Name!
         };
 
         context.Projects.Add(model);
@@ -152,7 +152,7 @@ public class ProjectController : ControllerBase
             return NotFound();
         }
 
-        project.Name = input.Name;
+        project.Name = input.Name!;
 
         context.SaveChanges();
 
@@ -174,7 +174,7 @@ public class ProjectController : ControllerBase
             return NotFound();
         }
 
-        foreach (var userId in input.linkedUsers)
+        foreach (var userId in input.linkedUsers!)
         {
             var user = context.Users.FirstOrDefault(user => user.UserId == userId);
 

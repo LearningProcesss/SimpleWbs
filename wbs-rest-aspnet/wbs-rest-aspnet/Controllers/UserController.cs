@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using wbs_rest_aspnet.Application.Services.Interfaces;
 using wbs_rest_aspnet.Persistence.Context;
 using wbs_rest_aspnet.InterfaceAdapters.Dtos;
-using wbs_rest_aspnet.Application.Services.Dto;
 
 namespace wbs_rest_aspnet.Controllers;
 
@@ -114,9 +113,9 @@ public class UserController : ControllerBase
 
         Persistence.Models.User model = new Persistence.Models.User()
         {
-            Name = input.Name,
-            Surname = input.Surname,
-            Email = input.Email
+            Name = input.Name!,
+            Surname = input.Surname!,
+            Email = input.Email!
         };
 
         context.Users.Add(model);

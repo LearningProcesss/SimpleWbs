@@ -1,0 +1,193 @@
+\documentclass[10pt]{article}
+
+% e guidato da \textbf{Unit Test} con design \textbf{OOP}
+% https://tex.stackexchange.com/tags/accents/info
+
+% \usepackage{titling}
+\usepackage{titlesec}
+% \usepackage{ragged2e}
+\usepackage{multicol}
+\usepackage{graphics}
+\usepackage{mwe}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage[a4paper, left=1cm, top=1cm, right=1cm, bottom=1cm]{geometry}
+\usepackage{enumitem}
+\usepackage{nopageno}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    % linkcolor=blue,
+    % filecolor=magenta,      
+    urlcolor=blue,
+    pdfpagemode=FullScreen,
+    }
+
+\titleformat{\section}
+{\Large\bfseries}
+{}
+{0em} 
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries}
+{}
+{0em}
+{}[]
+
+\begin{document}
+
+\author{}
+
+\begin{flushleft}
+	\LARGE\bfseries{Mattia Minerva}
+\end{flushleft}
+
+% \begin{multicols}{2}
+% 	\begin{flushleft}
+% 		\LARGE\bfseries{Mattia Minerva}
+% 	\end{flushleft}
+% 	\columnbreak
+% 	\begin{flushright}
+% 		% $\vcenter{\hbox{\includegraphics[scale=0.3]{./images/map-marker.png}}}$ \footnotesize{Torino} \hspace{2em} \linebreak
+% 		% $\vcenter{\hbox{\includegraphics[scale=0.3]{./images/phone.png}}}$ \footnotesize{3470019903}
+% 	\end{flushright}
+% \end{multicols}
+
+\vspace{-1em}
+
+% \begin{multicols}{3}
+% 	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/email.png}}}$ \footnotesize{minerva.mattia.4j@gmail.com}
+% 	\columnbreak
+% 	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/linkedin.png}}}$ \footnotesize{www.linkedin.com/in/mattiaminerva}
+% 	\columnbreak
+% 	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/github.png}}}$ \footnotesize{https://github.com/LearningProcesss}
+% \end{multicols}
+
+\begin{flushleft}
+	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/phone.png}}}$ \footnotesize{3470019903}
+	\hspace{2em}
+	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/email.png}}}$ \footnotesize{minerva.mattia.4j@gmail.com}
+	\hspace{2em}
+	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/linkedin.png}}}$ \footnotesize{linkedin.com/in/mattiaminerva}
+	\hspace{2em}
+	$\vcenter{\hbox{\includegraphics[scale=0.3]{./images/github.png}}}$ \footnotesize{github.com/LearningProcesss}
+\end{flushleft}
+
+\vspace{-1.7em}
+
+\section{Esperienza professionale}
+\noindent \large\textbf{FullStack Software Developer e Analista PLM} \hfill Mar 2020 - Alla data attuale \\
+\textit{Fincad s.r.l.} \hfill \textit{Corso Vinzaglio 12 bis, Torino}
+% \vspace{0.1em}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1em]
+	\item Ideata e sviluppata Web App \textbf{ASP.NET} con design \textbf{Rest} e componenti \textbf{React},
+	      integra nel workflow la generazione del formato neutro da Report dati. 
+	      Ridotto il bisogno e numero di altre custom.
+	\item Progettato modulo \textbf{C\#} e \textbf{.Net 4.7} di comunicazione con CAD Elettrico,
+	      sincronizza dati di commessa, distinte basi e documenti 2D CAD.	
+	      Creato network con relativo vendor, generati introiti.
+	\item Documentato lo storico, le API e il processo di release di ogni POC.
+	\item Istituito team multi-partner per tracciare bugs, features e nuove API del prodotto principale.
+	\item Introdotte metodologie, best practice e standard emergenti nel Dev team che hanno diminuito il numero di bugs nel software rilasciato.
+	      Usati \textbf{AzureDevOps} e Github branching strategy.
+\end{itemize}
+
+\vspace{0.4em}
+
+\noindent \large\textbf{FullStack Software Developer} \hfill Gen 2019 - Feb 2020\\
+\textit{Advision s.r.l.} \hfill \textit{Corso San Martino 1, Torino}
+% \vspace{0.1em}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1em]
+	\item Sviluppati con metodologia Agile servizi RESTful di automazione e profilazione con \textbf{Typescript} \textbf{NestJs}, \textbf{PHP} \textbf{Laravel} e comunicazione asincrona con \textbf{RabbiMQ}.
+	\item Praticata esperienza nello sviluppo e deploy di applicazioni Cloud Native su \textbf{GCP} con architettura a microservizi scalabili basate su \textbf{Docker} e \textbf{Kubernetes}.
+	\item Collaborato con il team interno di grafica al design e creazione di componenti \textbf{React} con \textbf{Styled Components} per comporre UI responsive.
+	\item Partecipato attivamente alla definizione e implementazione del nuovo prodotto, introdotte le pi\'u moderne teconlogie e best practice Javascript e Node.js.
+\end{itemize}
+
+\vspace{0.4em}
+
+\noindent \large\textbf{Software Developer e Analista PLM} \hfill Gen 2013 - Dec 2018 \\
+\textit{Fincam sas} \hfill \textit{Corso Vinzaglio 12 bis, Torino}
+% \vspace{0.1em}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1em]
+	\item Analizzata e costruita applicazione \textbf{WPF} ETL con \textbf{SQL Server}, migrati terabyte di dati e files. Ridotto il tempo di messa in produzione del progetto PLM.
+	\item Formalizzato uno standard di codifica dinamica in ambito manifatturiero con libreria \textbf{C\#} e \textbf{T-SQL}. Eliminato il costo di sviluppo di custom su misura.
+	\item Consolidato l'uso del PLM nei dipartimenti cliente formando on-site key e admin users.
+	\item Aumentata la soddisfazione attraverso un'assistenza tecnica clienti reattiva e risolutiva. 
+\end{itemize}
+
+\vspace{-0.8em}
+
+\section{Competenze tecniche}
+\textbf{linguaggi:} fluente in CSS,HTML,Javascript,Typescript,C\#; pratica con Bash,Python,PHP \\
+\textbf{frameworks:} fluente in .NET,ASP.NET Core,Node.js,NestJs,Blitz,React; pratica con FastApi,Laravel\\
+\textbf{tools:} fluente in Git,Docker,Docker Compose,VMware,Github CI-CD pipeline\\
+\textbf{database:} fluente in MS SQL; pratica con MongoDb,Firestore,Redis,Elastic\\
+\textbf{software design:} fluente in MVC,Rest,TDD; pratica con Domain Driven,Microservices\\
+\textbf{os:} linux arch, debian; windows
+
+\vspace{-0.8em}
+
+\section{Progetti}
+\vspace{-0.4em}
+\large\textbf{boardgamegeekclient} \hfill \textit{https://github.com/LearningProcesss/boardgamegeekjsclient}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1em]
+	\item Node.js package pubblicato in NPM, scritto in Typescript, compilato per ambienti CommonJs, ES6.
+	\item API client asincrono con retry incorporato, deserializza le API XML in oggetti Javascript.
+	\item Tutti i data model sono mappati, Request e Response sono completamente tipizzate.
+\end{itemize}
+\large\textbf{better-gh-watched} \hfill \textit{https://github.com/LearningProcesss/better-gh-watched}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1em]
+	\item JAMStack app per esplorare velocemente la propria watching list.
+	\item Ricerca realtime che combina filtri Full-Text, per Topics o Linguaggio.
+\end{itemize}
+
+\vspace{-0.8em}
+
+\section{Lingue}
+\vspace{-1.6em}
+\begin{multicols}{2}
+	\begin{flushleft}
+		\textbf{Inglese:} Livello intermedio, professionale
+	\end{flushleft}
+	\columnbreak
+	\begin{flushright}
+		\textbf{Italiano:} Madrelingua
+	\end{flushright}
+\end{multicols}
+
+% \vspace{-1.5em}
+
+\section{Educazione e Certificazioni}
+% \vspace{-0.4em}
+\begin{itemize}[noitemsep,nolistsep,leftmargin=1.5em]
+	\item Domain Driven Design in Practice - Pluralsight - 2019
+	\item Docker Mastery: \textit{The complete toolset from a Docker Captain} - Udemy - 2017
+	\item Qualifica professionale, sviluppatore java e .Net - ENAIP - 2010
+	\item Diploma Tecnico Biologico - I.T.A.S. Santorre di Santarosa - 2007
+\end{itemize}
+
+% \vspace{-1em}
+
+\section{Interessi}
+\vspace{-0.5em}
+Trekking, mountain bike, fotografia, boardgame, libri, film, fantasy, fantascienza, tecncologia, cucina
+
+% \vspace{5em}
+
+% \noindent \tiny{Ai sensi del D.Lgs. n. 101/2018 - Regolamento UE 2016/675 - s'intende autorizzato il trattamento dei dati contenuti nel presente CV per finalità connesse alla selezione e al rapporto di lavoro.}
+% \vspace{-1em}
+% \begin{flushright}
+% 	\includegraphics[scale=0.7]{firma.png}
+% \end{flushright}
+% \end{document}
+
+\vspace*{\fill}
+% \noindent \small{Ai sensi del D.Lgs. n. 101/2018 - Regolamento UE 2016/675 - s'intende autorizzato il trattamento dei dati contenuti nel presente Curriculum Vitae per finalit\'a connesse alla selezione e al rapporto di lavoro.}
+\noindent \small{Autorizzo il trattamento dei miei dati personali ai sensi del Dlgs 196 del 30 giugno 2003 e dell’art. 13 GDPR (Regolamento UE 2016/679) ai fini della ricerca e selezione del personale.}
+\vspace{-1em}
+\begin{flushright}
+	\includegraphics[scale=0.9]{firma.png}
+\end{flushright}
+\end{document}

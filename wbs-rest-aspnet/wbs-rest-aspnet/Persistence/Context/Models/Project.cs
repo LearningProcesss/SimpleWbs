@@ -9,4 +9,5 @@ public class Project
     public int? ClientId { get; set; }
     public virtual Client Client { get; set; }
     public virtual ICollection<UsersProjects> UsersProjects { get; set; }
+    public virtual ICollection<Document> Documents { get; set; }
 }

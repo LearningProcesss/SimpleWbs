@@ -65,7 +65,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [HttpGet("{id:int}/linkedClients", Name = "GetLinkedClientsFromUser")]
+    [HttpGet("{id:int}/clients", Name = "GetLinkedClientsFromUser")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OutputUserDto))]
@@ -82,7 +82,7 @@ public class UserController : ControllerBase
         return Ok(new { UserId = model.UserId, Clients = model.UsersClients.Select(rel => rel.ClientId) });
     }
 
-    [HttpGet("{id:int}/linkedProjects", Name = "GetLinkedProjectFromUser")]
+    [HttpGet("{id:int}/projects", Name = "GetLinkedProjectFromUser")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OutputUserDto))]

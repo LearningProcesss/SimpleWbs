@@ -8,6 +8,7 @@ public class WbsContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Client> Clients { get; set; }
     public DbSet<Project> Projects { get; set; }
+    public DbSet<Document> Documents { get; set; }
     public DbSet<UsersClients> UsersClients { get; set; }
     public DbSet<UsersProjects> UsersProjects { get; set; }
 
@@ -59,6 +60,11 @@ public class WbsContext : DbContext
         modelBuilder.Entity<Project>()
                     .HasOne<Client>(project => project.Client)
                     .WithMany(client => client.Projects);
+
+        modelBuilder.Entity<Document>()
+                    .HasOne<Project>(document => document.Project)
+                    .WithMany(project => project.Documents)
+                    .HasForeignKey(document => document.ProjectId);
 
         modelBuilder.Entity<UsersProjects>().HasKey(e => new { e.UserId, e.ProjectId });
 

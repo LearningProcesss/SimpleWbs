@@ -16,4 +16,7 @@ public class OutputProjectDto
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IEnumerable<int>? Users { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IEnumerable<int>? Documents { get; set; }
 }

@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using System.Collections.Generic;
-using wbs_rest_aspnet.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using wbs_rest_aspnet.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using wbs_rest_aspnet.InterfaceAdapters.Dtos;
 
 namespace wbs_rest_aspnet.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/v1/clients")]
 public class ClientController : ControllerBase

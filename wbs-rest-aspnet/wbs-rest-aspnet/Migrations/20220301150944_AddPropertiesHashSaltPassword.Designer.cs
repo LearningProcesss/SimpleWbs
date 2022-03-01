@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wbs_rest_aspnet.Persistence.Context;
 
@@ -11,9 +12,10 @@ using wbs_rest_aspnet.Persistence.Context;
 namespace wbs_rest_aspnet.Migrations
 {
     [DbContext(typeof(WbsContext))]
-    partial class WbsContextModelSnapshot : ModelSnapshot
+    [Migration("20220301150944_AddPropertiesHashSaltPassword")]
+    partial class AddPropertiesHashSaltPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

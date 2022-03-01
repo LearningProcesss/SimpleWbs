@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using wbs_rest_aspnet.Persistence.Context;
 using wbs_rest_aspnet.InterfaceAdapters.Dtos;
-using wbs_rest_aspnet.InterfaceAdapters.Dtos.Request;
+using wbs_rest_aspnet.InterfaceAdapters.Dtos.Requests;
 using System.IO;
 
 namespace wbs_rest_aspnet.Controllers;

@@ -68,23 +68,6 @@ public class ProjectController : ControllerBase
         return Ok(project);
     }
 
-    // [HttpGet("{id:int}/users", Name = "GetLinkedUsersFromProject")]
-    // [Consumes(MediaTypeNames.Application.Json)]
-    // [Produces("application/json")]
-    // [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OutputProjectDto))]
-    // [ProducesResponseType(StatusCodes.Status404NotFound)]
-    // public IActionResult GetLinkedUsers(int id)
-    // {
-    //     var model = context.Projects.Include(rel => rel.UsersProjects).FirstOrDefault(project => project.ProjectId == id);
-
-    //     if (model == null)
-    //     {
-    //         return NotFound();
-    //     }
-
-    //     return Ok(new { ProjectId = model.ProjectId, Users = model.UsersProjects.Select(rel => rel.UserId) });
-    // }
-
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]

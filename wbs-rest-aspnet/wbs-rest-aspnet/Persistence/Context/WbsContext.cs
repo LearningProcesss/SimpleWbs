@@ -24,7 +24,8 @@ public class WbsContext : DbContext
                 entity.HasKey(e => e.UserId);
                 entity.Property(e => e.Name).HasMaxLength(20).IsUnicode(false).IsRequired();
                 entity.Property(e => e.Surname).HasMaxLength(20).IsUnicode(false).IsRequired();
-                // entity.Property(e => e.UserName).HasMaxLength(40).HasDefaultValue<string>()
+                entity.Property(e => e.PasswordSalt).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
                 entity.Property(e => e.Email).HasMaxLength(50).IsUnicode(false).IsRequired();
                 entity.Property(e => e.CreateOn).HasDefaultValueSql("getdate()");
             });

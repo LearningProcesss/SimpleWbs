@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace wbs_rest_aspnet.InterfaceAdapters.Dtos.Request;
+namespace wbs_rest_aspnet.InterfaceAdapters.Dtos.Requests;
 
 public class CreateDocumentDto
 {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace wbs_rest_aspnet.InterfaceAdapters.Dtos;
+namespace wbs_rest_aspnet.InterfaceAdapters.Dtos.Requests;
 
 public class OutputDocumentDto
 {

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using wbs_rest_aspnet.Persistence.Context;
 using Swashbuckle.AspNetCore.Filters;
@@ -34,10 +35,10 @@ builder.Services.AddSwaggerGen(c =>
                 // c.OperationFilter<AuthResponsesOperationFilter>();
             });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-});
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+    {
+        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    }));
 
 builder.Services.AddDbContext<WbsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection")));
 
@@ -90,10 +91,33 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("corsapp");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+// app.Run(async (context) =>
+// {
+//     await Task.Run(() =>
+//     {
+//         var claimsIdentity = context.User.Identity as ClaimsIdentity;
+
+//         if (claimsIdentity != null)
+//         {
+//             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+//             context.Request.Headers.Add("UserId", claim?.Value ?? "-1");
+
+//             Console.WriteLine($"UserId - {claim?.Value}");
+
+//             return;
+//         }
+
+//     });
+// });
+
 
 app.Run();

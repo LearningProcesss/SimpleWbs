@@ -52,6 +52,7 @@ public class AuthService : IAuthService
 
         return new LoginResultDto
         {
+            UserId = user.UserId,
             Success = true,
             AccessToken = accessToken,
             RefreshToken = refreshToken

@@ -1,13 +1,14 @@
 version: '3.8'
 services:
-  # app-react:
-  #   container_name: app-react
-  #   build: ./app-react
-  #   volumes:
-  #     - ./app-react:/usr/src/app:rw
-  #   command: tail -F anything
-  #   ports:
-  #     - 3000:3000
+  app-react:
+    container_name: app-react
+    build: ./app-react
+    volumes:
+       - ./app-react:/usr/src/app:rw
+    command: tail -F anything
+    ports:
+       - 3000:3000
+       - 3001:3001
   wbs-rest-aspnet:
     container_name: wbs-rest-aspnet
     build: ./wbs-rest-aspnet

@@ -2,6 +2,7 @@ namespace wbs_rest_aspnet.Application.Dtos.Responses;
 
 public class LoginResultDto
 {
+    public int UserId { get; set; }
     public bool Success { get; set; }
     public string? AccessToken { get; set; }
     public string? RefreshToken { get; set; }

@@ -7,12 +7,11 @@ using wbs_rest_aspnet.InterfaceAdapters.Dtos;
 
 namespace wbs_rest_aspnet.Controllers;
 
-[Authorize]
+
 [ApiController]
 [Route("api/v1/clients")]
 public class ClientController : ControllerBase
 {
-    // private IUserService userService;
     private WbsContext context;
 
     public ClientController(WbsContext context)
@@ -105,6 +104,7 @@ public class ClientController : ControllerBase
                     User = user
                 };
 
+                // model.UsersClients.Add(userClient);
                 context.UsersClients.Add(userClient);
 
                 context.SaveChanges();
@@ -153,7 +153,7 @@ public class ClientController : ControllerBase
         }
 
         Persistence.Models.UsersClients? relation = client.UsersClients.FirstOrDefault(rel => rel.ClientId == id && rel.UserId == userId);
-        
+
         if (relation != null)
         {
             return BadRequest();
@@ -166,7 +166,7 @@ public class ClientController : ControllerBase
             return NotFound($"User not found with id: {userId}");
         }
 
-        client.UsersClients.Add(new Persistence.Models.UsersClients { ClientId = id, UserId = userId});
+        client.UsersClients.Add(new Persistence.Models.UsersClients { ClientId = id, UserId = userId });
 
         context.SaveChanges();
 
@@ -189,7 +189,7 @@ public class ClientController : ControllerBase
         }
 
         Persistence.Models.UsersClients? relation = client.UsersClients.FirstOrDefault(rel => rel.ClientId == id && rel.UserId == userId);
-        
+
         if (relation == null)
         {
             return BadRequest();
@@ -225,7 +225,7 @@ public class ClientController : ControllerBase
         }
 
         Persistence.Models.Project? projectRel = client.Projects.FirstOrDefault(rel => rel.ProjectId == projectId);
-        
+
         if (projectRel != null)
         {
             return BadRequest();
@@ -261,7 +261,7 @@ public class ClientController : ControllerBase
         }
 
         Persistence.Models.Project? projectRel = client.Projects.FirstOrDefault(rel => rel.ProjectId == projectId);
-        
+
         if (projectRel == null)
         {
             return BadRequest();

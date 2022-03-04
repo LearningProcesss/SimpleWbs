@@ -9,6 +9,8 @@ services:
     ports:
        - 3000:3000
        - 3001:3001
+    depends_on:
+       - wbs-rest-aspnet
   wbs-rest-aspnet:
     container_name: wbs-rest-aspnet
     build: ./wbs-rest-aspnet

@@ -15,13 +15,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Fab from '@mui/material/Fab';
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import { useState } from 'react';
 import {
     useMutation, useQuery, useQueryClient
 } from 'react-query';
 
 
-export default function CreateClient({ children, style }) {
+export default function EditClient({ children, style, clientObject }) {
+    console.log("Edit", clientObject);
 
     const queryClient = useQueryClient();
 
@@ -52,13 +55,41 @@ export default function CreateClient({ children, style }) {
             queryClient.invalidateQueries();
         }
     });
+    const editClientMutation = useMutation(editClientData => {
+        return fetch(`http://127.0.0.1:5000/api/v1/clients/${editClientData.clientId}`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(editClientData)
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            queryClient.invalidateQueries();
+        }
+    });
+    const linkClientUserMutation = useMutation(linkClientUser => {
+        return fetch(`http://127.0.0.1:5000/api/v1/clients/${linkClientUser.clientId}/users/${linkClientUser.userId}`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(linkClientUser)
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            queryClient.invalidateQueries();
+        }
+    });
 
-    const [clientName, setClientName] = useState(null);
-    const [clientVat, setClientVat] = useState(null);
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [clientName, setClientName] = useState(clientObject.name);
+    const [clientVat, setClientVat] = useState(clientObject.vat);
+    const [selectedUsers, setSelectedUsers] = useState(clientObject.users ? clientObject.users : []);
     const [open, setOpen] = useState(false);
 
-    const handleClickOpen = () => {
+    const handleOpen = () => {
         setOpen(true);
     };
 
@@ -67,7 +98,9 @@ export default function CreateClient({ children, style }) {
     };
 
     const handleCloseWithCreate = () => {
-        createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
+        // createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
+
+        editClientMutation.mutate({ name: clientName, vat: clientVat });
 
         setOpen(false);
     }
@@ -90,17 +123,17 @@ export default function CreateClient({ children, style }) {
 
     return (
         <div style={style}>
-            <Button variant="contained" color="success" onClick={handleClickOpen}>
-                Create
-            </Button>
+            <Fab color="warning" aria-label="add" onClick={handleOpen}>
+                <ModeEditOutlineIcon />
+            </Fab>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Client</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Create new Client. Assign users also.
+                        Edit Client. Assign users also.
                     </DialogContentText>
-                    <TextField onChange={(e) => setClientName(e.target.value)} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setClientVat(e.target.value)} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setClientName(e.target.value)} value={clientName} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setClientVat(e.target.value)} value={clientVat} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
                     <Accordion style={{ marginTop: "1em" }}>
                         <AccordionSummary
@@ -112,12 +145,12 @@ export default function CreateClient({ children, style }) {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                All selected users are automatically assigned to the new Client.
+                                All selected users are automatically assigned to the Client.
                             </Typography>
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
-                                        <FormControlLabel control={<Checkbox id={'' + user.userId} key={user.userId + '' + index} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
+                                        <FormControlLabel control={<Checkbox id={'' + user.userId} key={user.userId + '' + index} defaultChecked={selectedUsers.indexOf(user.userId) >= 0} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>
@@ -131,7 +164,7 @@ export default function CreateClient({ children, style }) {
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Create
+                        Edit
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

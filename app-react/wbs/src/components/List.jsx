@@ -1,13 +1,19 @@
-import React from 'react'
-import Stack from '@mui/material/Stack';
+import React, { Fragment } from 'react'
+import { Stack, Typography } from '@mui/material';
 
-export default function List({ style, children, datalist, renderDataItem }) {
-    console.log("list", datalist, renderDataItem);
+export default function List({ style, children, datalist, headerText, renderDataItem }) {
+    // console.log("list", datalist, renderDataItem);
     return (
-        <Stack direction={"column"} spacing={5}>
-            {datalist ?? datalist.map(item => (
-                renderDataItem(item)
-            ))}
-        </Stack>
+        <Fragment>
+            <Typography variant="h2">{headerText}</Typography>
+            <Stack direction={"column"} spacing={2}>
+                {datalist.map(item => (
+                    renderDataItem(item)
+                ))}
+            </Stack>
+            {
+                children
+            }
+        </Fragment>
     )
 }

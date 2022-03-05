@@ -1,23 +1,23 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
-import WorkIcon from '@mui/icons-material/Work';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import EditClient from './EditClient';
+import EditProject from './EditProject';
 
-export default function ClientCard({ children, styles, itemId }) {
+export default function ProjectCard({ children, styles, itemId }) {
 
     const queryClient = useQueryClient();
 
     const navigate = useNavigate();
 
-    console.log("ClientCard-itemId", itemId);
+    console.log("ProjectCard-itemId", itemId);
 
-    const { isLoading, isError, data, error } = useQuery(`client_${itemId}`, () =>
-        fetch(`http://127.0.0.1:5000/api/v1/clients/${itemId}`, {
+    const { isLoading, isError, data, error } = useQuery(`project_${itemId}`, () =>
+        fetch(`http://127.0.0.1:5000/api/v1/projects/${itemId}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -26,8 +26,8 @@ export default function ClientCard({ children, styles, itemId }) {
         }).then((res) => res.json())
     );
 
-    const deleteClient = useMutation(clientId => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${clientId}`, {
+    const deleteProject = useMutation(projectId => {
+        return fetch(`http://127.0.0.1:5000/api/v1/projects/${projectId}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
@@ -41,12 +41,12 @@ export default function ClientCard({ children, styles, itemId }) {
     });
 
     const onDeleteClickHandler = useCallback(() => {
-        deleteClient.mutate(itemId);
+        deleteProject.mutate(itemId);
     }, []);
 
-    const onCardClickHandler = useCallback((e) => {
-        navigate(`/clients/${itemId}`);
-    }, []);
+    const onCardClickHandler = useCallback(() => {
+        navigate(`/projects/${itemId}`);
+    });
 
     if (!itemId) {
         return null;
@@ -66,7 +66,7 @@ export default function ClientCard({ children, styles, itemId }) {
         return <span>Error: {error.message}</span>
     }
 
-    const { clientId, createOn, name, vat, users, projects } = data;
+    const { clientId, createOn, name, vat, users, documents } = data;
 
     return (
         <Card sx={{ display: 'flex' }}>
@@ -77,18 +77,18 @@ export default function ClientCard({ children, styles, itemId }) {
                     <Badge badgeContent={users != null ? users.length : 0} color="success">
                         <PersonIcon color="action" />
                     </Badge>
-                    <Badge badgeContent={projects != null ? projects.length : 0} color="success">
-                        <WorkIcon color="action" />
+                    <Badge badgeContent={documents != null ? documents.length : 0} color="success">
+                        <InsertDriveFileIcon color="action" />
                     </Badge>
                 </div>
             </CardContent>
             <CardActions>
                 <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
-                    <EditClient entity={data} />
-                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteClient.isLoading}>
+                    <EditProject entity={data} />
+                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteProject.isLoading}>
                         <DeleteIcon />
                     </Fab>
-                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteClient.isLoading}>
+                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteProject.isLoading}>
                         <ArrowForwardIcon />
                     </Fab>
                 </Stack>

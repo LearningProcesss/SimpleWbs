@@ -72,7 +72,10 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Upload(int projectId, IFormFile file)
     {
+        Console.WriteLine("projectId", projectId);
+        Console.WriteLine("file", file != null);
 
+       
         var project = context.Projects.FirstOrDefault(project => project.ProjectId == projectId);
 
         if (project == null)

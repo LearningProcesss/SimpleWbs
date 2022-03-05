@@ -23,8 +23,8 @@ import {
 } from 'react-query';
 
 
-export default function EditClient({ children, style, entity }) {
-    console.log("Edit", entity);
+export default function EditProject({ children, style, entity }) {
+    console.log("EditProject", entity);
 
     const queryClient = useQueryClient();
 
@@ -41,28 +41,28 @@ export default function EditClient({ children, style, entity }) {
         })
     }
     );
-    const editClientMutation = useMutation(editClientData => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${editClientData.clientId}`, {
+    const editProjectMutation = useMutation(editProjectData => {
+        return fetch(`http://127.0.0.1:5000/api/v1/project/${editProjectData.projectId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(editClientData)
+            body: JSON.stringify(editProjectData)
         })
     }, {
         onSuccess: (data, variables, context) => {
             queryClient.invalidateQueries();
         }
     });
-    const linkClientUserMutation = useMutation(linkClientUser => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${linkClientUser.clientId}/users/${linkClientUser.userId}`, {
+    const linkProjectUserMutation = useMutation(linkProjectUser => {
+        return fetch(`http://127.0.0.1:5000/api/v1/projects/${linkProjectUser.projectId}/users/${linkProjectUser.userId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(linkClientUser)
+            body: JSON.stringify(linkProjectUser)
         })
     }, {
         onSuccess: (data, variables, context) => {
@@ -70,8 +70,7 @@ export default function EditClient({ children, style, entity }) {
         }
     });
 
-    const [clientName, setClientName] = useState(entity?.name);
-    const [clientVat, setClientVat] = useState(entity?.vat);
+    const [name, setName] = useState(entity.name);
     const [selectedUsers, setSelectedUsers] = useState(entity.users ? entity.users : []);
     const [open, setOpen] = useState(false);
 
@@ -86,7 +85,7 @@ export default function EditClient({ children, style, entity }) {
     const handleCloseWithCreate = () => {
         // createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
 
-        editClientMutation.mutate({ name: clientName, vat: clientVat });
+        editProjectMutation.mutate({ name: name});
 
         setOpen(false);
     }
@@ -118,8 +117,7 @@ export default function EditClient({ children, style, entity }) {
                     <DialogContentText>
                         Edit Client. Assign users also.
                     </DialogContentText>
-                    <TextField onChange={(e) => setClientName(e.target.value)} value={clientName} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setClientVat(e.target.value)} value={clientVat} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setName(e.target.value)} value={name} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
                     <Accordion style={{ marginTop: "1em" }}>
                         <AccordionSummary
@@ -146,7 +144,7 @@ export default function EditClient({ children, style, entity }) {
                     <Button onClick={handleClose}>Cancel</Button>
                     <LoadingButton
                         onClick={handleCloseWithCreate}
-                        loading={editClientMutation.isLoading}
+                        loading={editProjectMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >

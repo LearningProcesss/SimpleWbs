@@ -1,9 +1,11 @@
+import { Route, Routes } from "react-router-dom";
 import './App.css';
-import Login from './components/Login';
-import Home from './components/Home';
 import ClientDashboard from './components/ClientDashboard';
+import ClientDetail from './components/ClientDetail';
+import ProjectDetail from './components/ProjectDetail';
+import Home from './components/Home';
+import Login from './components/Login';
 import { useAuthContext } from './hooks/authcontext';
-import { Routes, Router, Route, Link, useNavigate } from "react-router-dom";
 
 function App() {
 
@@ -18,7 +20,8 @@ function App() {
   return <Routes>
     <Route path="/" element={<Home />}>
       <Route path="/clients" element={<ClientDashboard />} />
-
+      <Route path="/clients/:clientId" element={<ClientDetail />} />
+      <Route path="/projects/:projectId" element={<ProjectDetail />} />
     </Route>
   </Routes>
 }

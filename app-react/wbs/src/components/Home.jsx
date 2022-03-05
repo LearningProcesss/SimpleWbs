@@ -1,16 +1,12 @@
-import React, { Suspense } from 'react'
+import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import { Routes, Router, Route, Link, useNavigate, Outlet } from "react-router-dom";
-
-
-// const Client = React.lazy(() => import("./Client"));
+import React from 'react';
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Home() {
     let navigate = useNavigate();
@@ -58,7 +54,9 @@ export default function Home() {
                     </Toolbar>
                 </AppBar>
             </Box>
-            <Outlet />
+            <div style={{ marginTop: "2rem", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                <Outlet />
+            </div>
         </React.Fragment>
     )
 }

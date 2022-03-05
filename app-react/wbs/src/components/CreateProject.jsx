@@ -1,4 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import WorkIcon from '@mui/icons-material/Work';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -15,16 +16,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Fab from '@mui/material/Fab';
-import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import { useState } from 'react';
 import {
     useMutation, useQuery, useQueryClient
 } from 'react-query';
 
 
-export default function EditClient({ children, style, entity }) {
-    console.log("Edit", entity);
+export default function CreateProject({ children, style, entityFatherId }) {
 
     const queryClient = useQueryClient();
 
@@ -41,28 +39,14 @@ export default function EditClient({ children, style, entity }) {
         })
     }
     );
-    const editClientMutation = useMutation(editClientData => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${editClientData.clientId}`, {
-            method: "PUT",
+    const createProjectMutation = useMutation(newProject => {
+        return fetch("http://127.0.0.1:5000/api/v1/projects", {
+            method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(editClientData)
-        })
-    }, {
-        onSuccess: (data, variables, context) => {
-            queryClient.invalidateQueries();
-        }
-    });
-    const linkClientUserMutation = useMutation(linkClientUser => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${linkClientUser.clientId}/users/${linkClientUser.userId}`, {
-            method: "PUT",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(linkClientUser)
+            body: JSON.stringify(newProject)
         })
     }, {
         onSuccess: (data, variables, context) => {
@@ -70,12 +54,12 @@ export default function EditClient({ children, style, entity }) {
         }
     });
 
-    const [clientName, setClientName] = useState(entity?.name);
-    const [clientVat, setClientVat] = useState(entity?.vat);
-    const [selectedUsers, setSelectedUsers] = useState(entity.users ? entity.users : []);
+    const [projectName, setProjectName] = useState(null);
+    const [clientToBeLinked, setClientToBeLinked] = useState(entityFatherId);
+    const [selectedUsers, setSelectedUsers] = useState([]);
     const [open, setOpen] = useState(false);
 
-    const handleOpen = () => {
+    const handleClickOpen = () => {
         setOpen(true);
     };
 
@@ -84,9 +68,7 @@ export default function EditClient({ children, style, entity }) {
     };
 
     const handleCloseWithCreate = () => {
-        // createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
-
-        editClientMutation.mutate({ name: clientName, vat: clientVat });
+        createProjectMutation.mutate({ name: projectName, clientToBeLinked: clientToBeLinked, usersToBeLinked: [...new Set(selectedUsers)] });
 
         setOpen(false);
     }
@@ -109,17 +91,16 @@ export default function EditClient({ children, style, entity }) {
 
     return (
         <div style={style}>
-            <Fab color="warning" aria-label="add" onClick={handleOpen}>
-                <ModeEditOutlineIcon />
-            </Fab>
+            <Button variant="contained" color="success" onClick={handleClickOpen} endIcon={<WorkIcon />}>
+                Create
+            </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Client</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Edit Client. Assign users also.
+                        Create new Project. Assign users also.
                     </DialogContentText>
-                    <TextField onChange={(e) => setClientName(e.target.value)} value={clientName} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setClientVat(e.target.value)} value={clientVat} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setProjectName(e.target.value)} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
                     <Accordion style={{ marginTop: "1em" }}>
                         <AccordionSummary
@@ -131,12 +112,12 @@ export default function EditClient({ children, style, entity }) {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                All selected users are automatically assigned to the Client.
+                                All selected users are automatically assigned to the new Client.
                             </Typography>
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
-                                        <FormControlLabel key={user.userId} control={<Checkbox id={'' + user.userId} key={user.userId} defaultChecked={selectedUsers.indexOf(user.userId) >= 0} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
+                                        <FormControlLabel key={user.userId + '' + index} control={<Checkbox id={'' + user.userId} key={user.userId + '' + index} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>
@@ -146,11 +127,11 @@ export default function EditClient({ children, style, entity }) {
                     <Button onClick={handleClose}>Cancel</Button>
                     <LoadingButton
                         onClick={handleCloseWithCreate}
-                        loading={editClientMutation.isLoading}
+                        loading={createProjectMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Edit
+                        Create
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

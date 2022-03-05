@@ -15,6 +15,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import { useState } from 'react';
 import {
     useMutation, useQuery, useQueryClient
@@ -90,7 +91,7 @@ export default function CreateClient({ children, style }) {
 
     return (
         <div style={style}>
-            <Button variant="contained" color="success" onClick={handleClickOpen}>
+            <Button variant="contained" color="success" onClick={handleClickOpen} endIcon={<CorporateFareIcon />}>
                 Create
             </Button>
             <Dialog open={open} onClose={handleClose}>

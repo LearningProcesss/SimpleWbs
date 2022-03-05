@@ -1,23 +1,23 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
-import WorkIcon from '@mui/icons-material/Work';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import EditClient from './EditClient';
+import EditProject from './EditProject';
 
-export default function ClientCard({ children, styles, itemId }) {
+export default function DocumentCard({ children, styles, itemId }) {
 
     const queryClient = useQueryClient();
 
     const navigate = useNavigate();
 
-    console.log("ClientCard-itemId", itemId);
+    console.log("DocumentCard-itemId", itemId);
 
-    const { isLoading, isError, data, error } = useQuery(`client_${itemId}`, () =>
-        fetch(`http://127.0.0.1:5000/api/v1/clients/${itemId}`, {
+    const { isLoading, isError, data, error } = useQuery(`document_${itemId}`, () =>
+        fetch(`http://127.0.0.1:5000/api/v1/documents/${itemId}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -26,8 +26,8 @@ export default function ClientCard({ children, styles, itemId }) {
         }).then((res) => res.json())
     );
 
-    const deleteClient = useMutation(clientId => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${clientId}`, {
+    const deleteProject = useMutation(projectId => {
+        return fetch(`http://127.0.0.1:5000/api/v1/projects/${projectId}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
@@ -41,12 +41,12 @@ export default function ClientCard({ children, styles, itemId }) {
     });
 
     const onDeleteClickHandler = useCallback(() => {
-        deleteClient.mutate(itemId);
+        deleteProject.mutate(itemId);
     }, []);
 
-    const onCardClickHandler = useCallback((e) => {
-        navigate(`/clients/${itemId}`);
-    }, []);
+    const onCardClickHandler = useCallback(() => {
+        navigate(`/projects/${itemId}`);
+    });
 
     if (!itemId) {
         return null;
@@ -66,29 +66,21 @@ export default function ClientCard({ children, styles, itemId }) {
         return <span>Error: {error.message}</span>
     }
 
-    const { clientId, createOn, name, vat, users, projects } = data;
+    const { documentId, fileName, isApproved } = data;
 
     return (
         <Card sx={{ display: 'flex' }}>
             <CardContent sx={{ minWidth: 500 }}>
-                <Typography variant="h5">{name}</Typography>
-                <Typography variant="overline">{createOn}</Typography>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', marginTop: '1rem' }}>
-                    <Badge badgeContent={users != null ? users.length : 0} color="success">
-                        <PersonIcon color="action" />
-                    </Badge>
-                    <Badge badgeContent={projects != null ? projects.length : 0} color="success">
-                        <WorkIcon color="action" />
-                    </Badge>
-                </div>
+                <Typography variant="h5">{fileName}</Typography>
+                {/* <Typography variant="overline">{createOn}</Typography> */}
             </CardContent>
             <CardActions>
                 <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
-                    <EditClient entity={data} />
-                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteClient.isLoading}>
+                    <EditProject entity={data} />
+                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteProject.isLoading}>
                         <DeleteIcon />
                     </Fab>
-                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteClient.isLoading}>
+                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteProject.isLoading}>
                         <ArrowForwardIcon />
                     </Fab>
                 </Stack>

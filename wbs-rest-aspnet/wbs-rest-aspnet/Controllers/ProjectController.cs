@@ -80,12 +80,12 @@ public class ProjectController : ControllerBase
             return BadRequest();
         }
 
-        Persistence.Models.Project model = new Persistence.Models.Project()
+        Persistence.Models.Project project = new Persistence.Models.Project()
         {
             Name = input.Name!
         };
 
-        context.Projects.Add(model);
+        context.Projects.Add(project);
 
         context.SaveChanges();
 
@@ -102,7 +102,7 @@ public class ProjectController : ControllerBase
 
                 Persistence.Models.UsersProjects userProject = new Persistence.Models.UsersProjects
                 {
-                    Project = model,
+                    Project = project,
                     User = user
                 };
 
@@ -112,13 +112,24 @@ public class ProjectController : ControllerBase
             }
         }
 
+        if (input.ClientToBeLinked != null)
+        {
+            var client = context.Clients.Include(rel => rel.Projects).FirstOrDefault(client => client.ClientId == input.ClientToBeLinked);
+        
+            client?.Projects.Add(project);
+
+            context.SaveChanges();
+
+            Console.WriteLine("creato");
+        }
+
         OutputProjectDto result = new OutputProjectDto()
         {
-            ProjectId = model.ProjectId,
-            Name = model.Name
+            ProjectId = project.ProjectId,
+            Name = project.Name
         };
 
-        return CreatedAtAction(nameof(Create), new { id = model.ProjectId }, result);
+        return CreatedAtAction(nameof(Create), new { id = project.ProjectId }, result);
     }
 
     [HttpPut("{id:int}")]
@@ -170,7 +181,7 @@ public class ProjectController : ControllerBase
             return NotFound($"User not found with id: {userId}");
         }
 
-        project.UsersProjects.Add(new Persistence.Models.UsersProjects { ProjectId = id, UserId = userId});
+        project.UsersProjects.Add(new Persistence.Models.UsersProjects { ProjectId = id, UserId = userId });
 
         context.SaveChanges();
 

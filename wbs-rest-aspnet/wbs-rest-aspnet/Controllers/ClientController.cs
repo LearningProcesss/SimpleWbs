@@ -46,7 +46,7 @@ public class ClientController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetOneById(int id)
     {
-        var client = context.Clients.FirstOrDefault(client => client.ClientId == id);
+        var client = context.Clients.Include(rel => rel.UsersClients).Include(rel => rel.Projects).FirstOrDefault(client => client.ClientId == id);
 
         if (client == null)
         {
@@ -59,7 +59,8 @@ public class ClientController : ControllerBase
             Name = client.Name,
             Vat = client.Vat,
             CreateOn = client.CreateOn,
-            Users = context.UsersClients.Where(rel => rel.ClientId == client.ClientId).Select(rel => rel.UserId).ToList()
+            Projects = client.Projects.Select(rel => rel.ProjectId),
+            Users = client.UsersClients.Where(rel => rel.ClientId == client.ClientId).Select(rel => rel.UserId).ToList()
         };
 
         return Ok(output);

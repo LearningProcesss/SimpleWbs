@@ -75,7 +75,7 @@ public class DocumentController : ControllerBase
         Console.WriteLine("projectId", projectId);
         Console.WriteLine("file", file != null);
 
-       
+
         var project = context.Projects.FirstOrDefault(project => project.ProjectId == projectId);
 
         if (project == null)
@@ -111,9 +111,15 @@ public class DocumentController : ControllerBase
 
     [HttpPut("{id:int}/setApprovation")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult SetApprovation(int id, [FromBody] bool approvation)
+    public IActionResult SetApprovation(int id, [FromBody] ApproveDocumentDto input)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
         var model = context.Documents.FirstOrDefault(document => document.DocumentId == id);
 
         if (model == null)
@@ -121,7 +127,7 @@ public class DocumentController : ControllerBase
             return NotFound();
         }
 
-        model.IsApproved = approvation;
+        model.IsApproved = input.IsApproved!;
 
         context.SaveChanges();
 
@@ -149,7 +155,7 @@ public class DocumentController : ControllerBase
         string currentFileWithServerPath = Path.Combine(config["FileServerPath"], $"{document.DocumentId}_{document.FileName}");
 
         string remFileWithServerPath = Path.Combine(config["FileServerPath"], $"_{document.DocumentId}_{document.FileName}");
-        
+
         System.IO.File.Move(currentFileWithServerPath, remFileWithServerPath);
 
         return Ok();

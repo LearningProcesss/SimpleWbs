@@ -1,18 +1,13 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import { Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, Skeleton, Stack, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useNavigate } from "react-router-dom";
-import EditProject from './EditProject';
 
 export default function DocumentCard({ children, styles, itemId }) {
 
     const queryClient = useQueryClient();
-
-    const navigate = useNavigate();
 
     console.log("DocumentCard-itemId", itemId);
 
@@ -26,8 +21,8 @@ export default function DocumentCard({ children, styles, itemId }) {
         }).then((res) => res.json())
     );
 
-    const deleteProject = useMutation(projectId => {
-        return fetch(`http://127.0.0.1:5000/api/v1/projects/${projectId}`, {
+    const deleteDocument = useMutation(documentId => {
+        return fetch(`http://127.0.0.1:5000/api/v1/documents/${documentId}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
@@ -40,13 +35,41 @@ export default function DocumentCard({ children, styles, itemId }) {
         }
     });
 
+    const approveDocument = useMutation(approve => {
+        return fetch(`http://127.0.0.1:5000/api/v1/documents/${itemId}/setApprovation`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(approve)
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            queryClient.invalidateQueries();
+        }
+    });
+
+    const [approveModalOpen, setApproveModalOpen] = useState(false);
+
     const onDeleteClickHandler = useCallback(() => {
-        deleteProject.mutate(itemId);
+        deleteDocument.mutate(itemId);
     }, []);
 
-    const onCardClickHandler = useCallback(() => {
-        navigate(`/projects/${itemId}`);
-    });
+    const onOpenModalHandler = useCallback(() => {
+        setApproveModalOpen(true);
+    }, []);
+
+    const onCloseModalHandler = useCallback((event) => {
+
+        console.log("target", event.currentTarget.id);
+
+        const approvation = event.target.id === 'approve' ? true : false;
+
+        approveDocument.mutate({ isApproved: approvation });
+
+        setApproveModalOpen(false);
+    }, [])
 
     if (!itemId) {
         return null;
@@ -69,22 +92,42 @@ export default function DocumentCard({ children, styles, itemId }) {
     const { documentId, fileName, isApproved } = data;
 
     return (
-        <Card sx={{ display: 'flex' }}>
-            <CardContent sx={{ minWidth: 500 }}>
-                <Typography variant="h5">{fileName}</Typography>
-                {/* <Typography variant="overline">{createOn}</Typography> */}
-            </CardContent>
-            <CardActions>
-                <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
-                    <EditProject entity={data} />
-                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteProject.isLoading}>
-                        <DeleteIcon />
+        <>
+            <Card sx={{ display: 'flex' }}>
+                <CardContent sx={{ minWidth: 500 }}>
+                    <Typography variant="h5">{fileName}</Typography>
+                </CardContent>
+                <CardActions>
+                    <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
+                        {/* <EditProject entity={data} /> */}
+                        <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteDocument.isLoading}>
+                            <DeleteIcon />
+                        </Fab>
+                        <Fab color={ isApproved ? "success" : "default" } aria-label="detail" onClick={onOpenModalHandler} disabled={deleteDocument.isLoading}>
+                            {
+                                isApproved ? <ThumbUpAltIcon /> : <ThumbDownAltIcon />
+                            }
+                        </Fab>
+                    </Stack>
+                </CardActions>
+            </Card>
+            <Dialog open={approveModalOpen} onClose={onCloseModalHandler}>
+                <DialogTitle>Document approvation</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Change document approvation
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Fab id="disapprove" aria-label="disapprove" onClick={onCloseModalHandler} disabled={deleteDocument.isLoading}>
+                        <ThumbDownAltIcon />
                     </Fab>
-                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteProject.isLoading}>
-                        <ArrowForwardIcon />
+                    <Fab id="approve" aria-label="approve" onClick={onCloseModalHandler} disabled={deleteDocument.isLoading}>
+                        <ThumbUpAltIcon />
                     </Fab>
-                </Stack>
-            </CardActions>
-        </Card>
+                </DialogActions>
+            </Dialog>
+
+        </>
     )
 }

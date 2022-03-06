@@ -14,8 +14,6 @@ export default function ClientCard({ children, styles, itemId }) {
 
     const navigate = useNavigate();
 
-    console.log("ClientCard-itemId", itemId);
-
     const { isLoading, isError, data, error } = useQuery(`client_${itemId}`, () =>
         fetch(`http://127.0.0.1:5000/api/v1/clients/${itemId}`, {
             method: "GET",

@@ -84,7 +84,6 @@ export default function EditClient({ children, style, entity }) {
     };
 
     const handleCloseWithCreate = () => {
-        // createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
 
         editClientMutation.mutate({ name: clientName, vat: clientVat });
 

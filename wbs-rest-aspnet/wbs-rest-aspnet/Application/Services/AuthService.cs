@@ -53,6 +53,7 @@ public class AuthService : IAuthService
         return new LoginResultDto
         {
             UserId = user.UserId,
+            UserNameSurname = $"{user.Name} {user.Surname}",
             Success = true,
             AccessToken = accessToken,
             RefreshToken = refreshToken

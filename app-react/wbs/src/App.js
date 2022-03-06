@@ -9,12 +9,14 @@ import { useAuthContext } from './hooks/authcontext';
 
 function App() {
 
-  const { isLoggedIn } = useAuthContext();
+  const { userInfo } = useAuthContext();
 
-  console.log("App-isLoggedIn-", isLoggedIn);
+  console.log("App-userInfo", userInfo);
 
-  if (isLoggedIn !== true) {
-    return <Login />
+  if (userInfo.isLoggedIn !== true) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Login />
+    </div>
   }
 
   return <Routes>

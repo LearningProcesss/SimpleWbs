@@ -1,8 +1,9 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
+import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography } from '@mui/material';
+import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography, Box } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from "react-router-dom";
@@ -67,19 +68,21 @@ export default function ClientCard({ children, styles, itemId }) {
     const { clientId, createOn, name, vat, users, projects } = data;
 
     return (
-        <Card sx={{ display: 'flex' }}>
-            <CardContent sx={{ minWidth: 500 }}>
-                <Typography variant="h5">{name}</Typography>
-                <Typography variant="overline">{createOn}</Typography>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', marginTop: '1rem' }}>
-                    <Badge badgeContent={users != null ? users.length : 0} color="success">
-                        <PersonIcon color="action" />
-                    </Badge>
-                    <Badge badgeContent={projects != null ? projects.length : 0} color="success">
-                        <WorkIcon color="action" />
-                    </Badge>
-                </div>
-            </CardContent>
+        <Card sx={{ display: 'flex', justifyContent: "space-between", maxWidth: { xs: '100%', sm: '100%', md: '30rem', lg: '100%', xl: '1rem' } }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <CardContent>
+                    <Typography variant="h5">{name}</Typography>
+                    <Typography variant="overline">{createOn}</Typography>
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', marginTop: '1rem' }}>
+                        <Badge badgeContent={users != null ? users.length : 0} color="success">
+                            <PersonIcon color="action" />
+                        </Badge>
+                        <Badge badgeContent={projects != null ? projects.length : 0} color="success">
+                            <WorkIcon color="action" />
+                        </Badge>
+                    </div>
+                </CardContent>
+            </Box>
             <CardActions>
                 <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
                     <EditClient entity={data} />

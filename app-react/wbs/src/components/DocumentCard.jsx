@@ -5,11 +5,9 @@ import { Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, D
 import React, { useCallback, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-export default function DocumentCard({ children, styles, itemId }) {
+export default function DocumentCard({ children, styles, itemId, fatherId }) {
 
     const queryClient = useQueryClient();
-
-    console.log("DocumentCard-itemId", itemId);
 
     const { isLoading, isError, data, error } = useQuery(`document_${itemId}`, () =>
         fetch(`http://127.0.0.1:5000/api/v1/documents/${itemId}`, {
@@ -31,11 +29,12 @@ export default function DocumentCard({ children, styles, itemId }) {
         })
     }, {
         onSuccess: (data, variables, context) => {
-            queryClient.invalidateQueries();
+            queryClient.invalidateQueries(`project_${fatherId}`);
         }
     });
 
     const approveDocument = useMutation(approve => {
+        console.log(approve)
         return fetch(`http://127.0.0.1:5000/api/v1/documents/${itemId}/setApprovation`, {
             method: "PUT",
             headers: {
@@ -46,7 +45,7 @@ export default function DocumentCard({ children, styles, itemId }) {
         })
     }, {
         onSuccess: (data, variables, context) => {
-            queryClient.invalidateQueries();
+            queryClient.invalidateQueries([`project_${fatherId}`]);
         }
     });
 
@@ -60,13 +59,20 @@ export default function DocumentCard({ children, styles, itemId }) {
         setApproveModalOpen(true);
     }, []);
 
-    const onCloseModalHandler = useCallback((event) => {
+    const onCloseModalHandler = useCallback(() => {
+        setApproveModalOpen(false);
+    }, []);
 
-        console.log("target", event.currentTarget.id);
+    const onCloseModalHandlerWithFalse = useCallback((event) => {
 
-        const approvation = event.target.id === 'approve' ? true : false;
+        approveDocument.mutate({ isApproved: false });
 
-        approveDocument.mutate({ isApproved: approvation });
+        setApproveModalOpen(false);
+    }, [])
+
+    const onCloseModalHandlerWithTrue = useCallback((event) => {
+
+        approveDocument.mutate({ isApproved: true });
 
         setApproveModalOpen(false);
     }, [])
@@ -93,8 +99,8 @@ export default function DocumentCard({ children, styles, itemId }) {
 
     return (
         <>
-            <Card sx={{ display: 'flex' }}>
-                <CardContent sx={{ minWidth: 500 }}>
+            <Card sx={{ display: 'flex', justifyContent: "space-between", maxWidth: { xs: '100%', sm: '100%', md: '30rem', lg: '100%', xl: '1rem' } }}>
+                <CardContent>
                     <Typography variant="h5">{fileName}</Typography>
                 </CardContent>
                 <CardActions>
@@ -103,7 +109,7 @@ export default function DocumentCard({ children, styles, itemId }) {
                         <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteDocument.isLoading}>
                             <DeleteIcon />
                         </Fab>
-                        <Fab color={ isApproved ? "success" : "default" } aria-label="detail" onClick={onOpenModalHandler} disabled={deleteDocument.isLoading}>
+                        <Fab color={isApproved ? "success" : "default"} aria-label="detail" onClick={onOpenModalHandler} disabled={deleteDocument.isLoading}>
                             {
                                 isApproved ? <ThumbUpAltIcon /> : <ThumbDownAltIcon />
                             }
@@ -112,19 +118,23 @@ export default function DocumentCard({ children, styles, itemId }) {
                 </CardActions>
             </Card>
             <Dialog open={approveModalOpen} onClose={onCloseModalHandler}>
-                <DialogTitle>Document approvation</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Change document approvation
-                    </DialogContentText>
+                <DialogTitle>Approvazione documento {fileName}</DialogTitle>
+                <DialogContent style={{ textAlign: 'center' }}>
+                    Vuoi approvare o rifiutare?
                 </DialogContent>
-                <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Fab id="disapprove" aria-label="disapprove" onClick={onCloseModalHandler} disabled={deleteDocument.isLoading}>
-                        <ThumbDownAltIcon />
-                    </Fab>
-                    <Fab id="approve" aria-label="approve" onClick={onCloseModalHandler} disabled={deleteDocument.isLoading}>
-                        <ThumbUpAltIcon />
-                    </Fab>
+                <DialogActions sx={{ display: "flex", justifyContent: "space-around" }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: "1rem" }}>
+                        <Fab id="disapprove" aria-label="disapprove" onClick={onCloseModalHandlerWithFalse} disabled={deleteDocument.isLoading}>
+                            <ThumbDownAltIcon />
+                        </Fab>
+                        <span>Rifiuta</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: "1rem" }}>
+                        <Fab id="approve" aria-label="approve" onClick={onCloseModalHandlerWithTrue} disabled={deleteDocument.isLoading}>
+                            <ThumbUpAltIcon />
+                        </Fab>
+                        <span>Accetta</span>
+                    </div>
                 </DialogActions>
             </Dialog>
 

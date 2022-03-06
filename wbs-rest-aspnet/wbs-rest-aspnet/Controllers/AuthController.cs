@@ -9,11 +9,10 @@ using wbs_rest_aspnet.Persistence.Context;
 using wbs_rest_aspnet.InterfaceAdapters.Dtos.Requests;
 using wbs_rest_aspnet.Application.Services.Interfaces;
 
-
 namespace wbs_rest_aspnet.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+// [Route("api/v1/auth")]
 public class AuthController : ControllerBase
 {
     private WbsContext context;
@@ -28,7 +27,8 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("/signin")]
+    [HttpPost("api/v1/auth/signin")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("/refresh_token")]
+    [HttpPost("api/v1/auth/refresh_token")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +78,7 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("/signup")]
+    [HttpPost("api/v1/auth/signup")]
     public IActionResult Signup([FromBody] SignupDto input)
     {
         if (!ModelState.IsValid)

@@ -105,7 +105,6 @@ public class ClientController : ControllerBase
                     User = user
                 };
 
-                // model.UsersClients.Add(userClient);
                 context.UsersClients.Add(userClient);
 
                 context.SaveChanges();
@@ -117,10 +116,37 @@ public class ClientController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = model.ClientId }, result);
     }
 
+    [HttpPut("{id:int}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult Update(int id, [FromBody] InputClientDtoPost input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        var client = context.Clients.FirstOrDefault(client => client.ClientId == id);
+
+        if (client == null)
+        {
+            return NotFound();
+        }
+
+        client.Name = input?.Name;
+        client.Vat = input?.Vat;
+
+        context.SaveChanges();
+
+        return NoContent();
+    }
+
     [HttpDelete("{id:int}")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Delete(int id)
     {

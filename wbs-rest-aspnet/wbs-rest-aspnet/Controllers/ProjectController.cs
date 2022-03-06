@@ -115,7 +115,7 @@ public class ProjectController : ControllerBase
         if (input.ClientToBeLinked != null)
         {
             var client = context.Clients.Include(rel => rel.Projects).FirstOrDefault(client => client.ClientId == input.ClientToBeLinked);
-        
+
             client?.Projects.Add(project);
 
             context.SaveChanges();
@@ -135,11 +135,17 @@ public class ProjectController : ControllerBase
     [HttpPut("{id:int}")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OutputProjectDto))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult UpdateProject(int id, [FromBody] InputProjectDtoPatch input)
+    public IActionResult Update(int id, [FromBody] InputProjectDtoPatch input)
     {
+        Console.WriteLine($"id: {id}");
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
         var project = context.Projects.FirstOrDefault(project => project.ProjectId == id);
 
         if (project == null)
@@ -151,7 +157,7 @@ public class ProjectController : ControllerBase
 
         context.SaveChanges();
 
-        return Ok(project);
+        return NoContent();
     }
 
     [HttpPut("{id:int}/users/{userId:int}")]

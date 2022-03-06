@@ -1,4 +1,5 @@
 import { Divider, Skeleton, Stack, Typography, Input, IconButton } from '@mui/material';
+import WorkIcon from '@mui/icons-material/Work';
 import { Fragment, lazy, Suspense } from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from "react-router-dom";
@@ -11,16 +12,16 @@ const CreateProjectAsync = lazy(() => import('./CreateProject'));
 
 export default function ProjectDetail() {
     const { projectId } = useParams();
-    console.log("detail", projectId)
 
-    const { isLoading, isError, data, error } = useQuery(`project_${projectId}`, () =>
+    const { isLoading, isError, data, error } = useQuery([`project_${projectId}`], () =>
         fetch(`http://127.0.0.1:5000/api/v1/projects/${projectId}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        }).then((res) => res.json())
+        }).then((res) => res.json()),
+        
     );
 
     if (isLoading) {
@@ -39,30 +40,33 @@ export default function ProjectDetail() {
 
     const { createOn, name, users, documents } = data;
 
-    console.log('ProjectDetail', data);
-
     function skeletonList() {
         return Array.from(Array(10).keys(), (n) => (
             <div style={{ margin: "1rem" }}>
-                <Skeleton variant="rectangular" width={250} height={300} />
+                <Skeleton variant="rectangular" width={100} height={100} />
             </div>
         ))
     }
 
     return (
-        <Fragment>
-            <Typography variant="h3">{name}</Typography>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", alignContent: "center" }}>
-                <Typography>Projects</Typography>
-                <CreateDocument entityFatherId={projectId} />
+        <div style={{ marginLeft: "1rem", marginRight: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <WorkIcon />
+                <Typography variant="h3">{name}</Typography>
             </div>
-            <Divider style={{}} />
+            <div style={{ display: "flex", alignContent: "center", justifyContent: "space-between", marginTop: "1rem", marginBottom: "1rem" }}>
+                <Typography sx={{ mt: 1, mb: 1 }} variant="button">Documents {documents && documents.length}</Typography>
+                <Suspense fallback={<Skeleton variant="rectangular" width={100} height={100} />}>
+                    <CreateDocument entityFatherId={projectId} />
+                </Suspense>
+            </div>
+            <Divider sx={{ width: '100%' }} />
             <Suspense fallback={skeletonList()}>
-                <ListAsync key={0} headerText={""} datalist={documents ? documents : []} renderDataItem={(item, index) => (
-                    <DocumentCardAsync key={item} itemId={item} />
+                <ListAsync style={{ marginTop: "1rem" }} headerText={""} datalist={documents ? documents : []} renderDataItem={(item, index) => (
+                    <DocumentCardAsync key={item} itemId={item} fatherId={projectId} />
                 )}>
                 </ListAsync>
             </Suspense>
-        </Fragment>
+        </div>
     )
 }

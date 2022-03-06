@@ -24,7 +24,6 @@ import {
 
 
 export default function EditClient({ children, style, entity }) {
-    console.log("Edit", entity);
 
     const queryClient = useQueryClient();
 
@@ -42,7 +41,7 @@ export default function EditClient({ children, style, entity }) {
     }
     );
     const editClientMutation = useMutation(editClientData => {
-        return fetch(`http://127.0.0.1:5000/api/v1/clients/${editClientData.clientId}`, {
+        return fetch(`http://127.0.0.1:5000/api/v1/clients/${entity.clientId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
@@ -83,7 +82,7 @@ export default function EditClient({ children, style, entity }) {
         setOpen(false);
     };
 
-    const handleCloseWithCreate = () => {
+    const handleCloseWithEdit = () => {
 
         editClientMutation.mutate({ name: clientName, vat: clientVat });
 
@@ -112,10 +111,10 @@ export default function EditClient({ children, style, entity }) {
                 <ModeEditOutlineIcon />
             </Fab>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Client</DialogTitle>
+                <DialogTitle>Cliente {entity.name}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Edit Client. Assign users also.
+                        Modifica i dati del cliente. Puoi assegnare anche gli utenti.
                     </DialogContentText>
                     <TextField onChange={(e) => setClientName(e.target.value)} value={clientName} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <TextField onChange={(e) => setClientVat(e.target.value)} value={clientVat} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
@@ -126,12 +125,9 @@ export default function EditClient({ children, style, entity }) {
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
-                            <Typography>User Assignments</Typography>
+                            <Typography>Assegnazione Utenti</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Typography>
-                                All selected users are automatically assigned to the Client.
-                            </Typography>
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
@@ -142,14 +138,14 @@ export default function EditClient({ children, style, entity }) {
                     </Accordion>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Annulla</Button>
                     <LoadingButton
-                        onClick={handleCloseWithCreate}
+                        onClick={handleCloseWithEdit}
                         loading={editClientMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Edit
+                        Modifica
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

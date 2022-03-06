@@ -64,7 +64,6 @@ export default function Login() {
         </Box>
         <TabPanel value={value} index={0}>
           <Formik initialValues={{ email: '', password: '' }} onSubmit={(values, { setSubmitting }) => {
-            console.log("signin clicked", values);
             signin(values.email, values.password);
           }}>
             {({

@@ -119,7 +119,7 @@ public class DocumentController : ControllerBase
         {
             return BadRequest();
         }
-
+        
         var model = context.Documents.FirstOrDefault(document => document.DocumentId == id);
 
         if (model == null)

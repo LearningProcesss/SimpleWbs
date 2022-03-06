@@ -1,6 +1,6 @@
-import WorkIcon from '@mui/icons-material/Work';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { IconButton, Input } from '@mui/material';
+import { IconButton, Input, Fab } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -59,9 +59,10 @@ export default function CreateDocument({ children, style, entityFatherId }) {
 
     return (
         <div style={style}>
-            <Button variant="contained" color="success" onClick={handleClickOpen} endIcon={<WorkIcon />}>
-                Create
-            </Button>
+            <Fab onClick={handleClickOpen} variant="extended">
+                <FilePresentIcon sx={{ mr: 1 }} />
+                Aggiungi Documento
+            </Fab>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Create new Document uploading file.</DialogTitle>
                 <DialogContent>

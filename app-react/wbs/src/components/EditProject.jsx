@@ -24,7 +24,6 @@ import {
 
 
 export default function EditProject({ children, style, entity }) {
-    console.log("EditProject", entity);
 
     const queryClient = useQueryClient();
 
@@ -42,7 +41,7 @@ export default function EditProject({ children, style, entity }) {
     }
     );
     const editProjectMutation = useMutation(editProjectData => {
-        return fetch(`http://127.0.0.1:5000/api/v1/project/${editProjectData.projectId}`, {
+        return fetch(`http://127.0.0.1:5000/api/v1/projects/${entity.projectId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
@@ -82,10 +81,8 @@ export default function EditProject({ children, style, entity }) {
         setOpen(false);
     };
 
-    const handleCloseWithCreate = () => {
-        // createClient.mutate({ name: clientName, vat: clientVat, usersToBeLinked: [...new Set(selectedUsers)] });
-
-        editProjectMutation.mutate({ name: name});
+    const handleCloseWithEdit = () => {
+        editProjectMutation.mutate({ name: name });
 
         setOpen(false);
     }
@@ -112,10 +109,10 @@ export default function EditProject({ children, style, entity }) {
                 <ModeEditOutlineIcon />
             </Fab>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Client</DialogTitle>
+                <DialogTitle>Progetto {entity.name}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Edit Client. Assign users also.
+                        Modifica i dati del progetto progetto. Puoi assegnare anche gli utenti.
                     </DialogContentText>
                     <TextField onChange={(e) => setName(e.target.value)} value={name} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
@@ -125,12 +122,9 @@ export default function EditProject({ children, style, entity }) {
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
-                            <Typography>User Assignments</Typography>
+                            <Typography>Assegnazione Utenti</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Typography>
-                                All selected users are automatically assigned to the Client.
-                            </Typography>
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
@@ -141,14 +135,14 @@ export default function EditProject({ children, style, entity }) {
                     </Accordion>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Annulla</Button>
                     <LoadingButton
-                        onClick={handleCloseWithCreate}
+                        onClick={handleCloseWithEdit}
                         loading={editProjectMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Edit
+                        Modifica
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

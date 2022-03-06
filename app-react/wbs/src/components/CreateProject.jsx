@@ -5,6 +5,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -91,14 +92,15 @@ export default function CreateProject({ children, style, entityFatherId }) {
 
     return (
         <div style={style}>
-            <Button variant="contained" color="success" onClick={handleClickOpen} endIcon={<WorkIcon />}>
-                Create
-            </Button>
+            <Fab onClick={handleClickOpen} variant="extended">
+                <WorkIcon sx={{ mr: 1 }} />
+                Aggiungi Progetto
+            </Fab>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Client</DialogTitle>
+                <DialogTitle>Nuovo Progetto</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Create new Project. Assign users also.
+                        Crea un nuovo Progetto. Puoi anche assegnare gli utenti.
                     </DialogContentText>
                     <TextField onChange={(e) => setProjectName(e.target.value)} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
@@ -108,11 +110,11 @@ export default function CreateProject({ children, style, entityFatherId }) {
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
-                            <Typography>User Assignments</Typography>
+                            <Typography>Utenti</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                All selected users are automatically assigned to the new Client.
+                                Gli utenti selzionati saranno assegnati al progetto.
                             </Typography>
                             <FormGroup>
                                 {
@@ -124,14 +126,14 @@ export default function CreateProject({ children, style, entityFatherId }) {
                     </Accordion>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Annulla</Button>
                     <LoadingButton
                         onClick={handleCloseWithCreate}
                         loading={createProjectMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Create
+                        Crea
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

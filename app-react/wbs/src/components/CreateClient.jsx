@@ -4,6 +4,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,6 +16,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Typography';
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import { useState } from 'react';
 import {
@@ -82,7 +84,7 @@ export default function CreateClient({ children, style }) {
     }
 
     if (isLoading) {
-        return <span>Loading...</span>
+        return <Skeleton variant="rectangular" width={"48px"} height={"170px"} />
     }
 
     if (isError) {
@@ -91,14 +93,15 @@ export default function CreateClient({ children, style }) {
 
     return (
         <div style={style}>
-            <Button variant="contained" color="success" onClick={handleClickOpen} endIcon={<CorporateFareIcon />}>
-                Create
-            </Button>
+            <Fab onClick={handleClickOpen} variant="extended">
+                <CorporateFareIcon sx={{ mr: 1 }} />
+                Aggiungi Cliente
+            </Fab>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Client</DialogTitle>
+                <DialogTitle>Nuovo cliente</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Create new Client. Assign users also.
+                        Crea un nuovo Cliente. Puoi anche assegnare gli utenti.
                     </DialogContentText>
                     <TextField onChange={(e) => setClientName(e.target.value)} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
                     <TextField onChange={(e) => setClientVat(e.target.value)} margin="dense" id="vat" label="Vat" type="text" fullWidth variant="standard" />
@@ -109,30 +112,30 @@ export default function CreateClient({ children, style }) {
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
-                            <Typography>User Assignments</Typography>
+                            <Typography>Utenti</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                All selected users are automatically assigned to the new Client.
+                                Gli utenti selzionati saranno assegnati al progetto.
                             </Typography>
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
-                                        <FormControlLabel control={<Checkbox id={'' + user.userId} key={user.userId + '' + index} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
+                                        <FormControlLabel key={user.userId} control={<Checkbox id={'' + user.userId} key={user.userId + '' + index} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>
                     </Accordion>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Annulla</Button>
                     <LoadingButton
                         onClick={handleCloseWithCreate}
                         loading={createClient.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >
-                        Create
+                        Crea
                     </LoadingButton>
                 </DialogActions>
             </Dialog>

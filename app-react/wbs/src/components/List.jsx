@@ -3,7 +3,7 @@ import { Stack, Typography, Divider } from '@mui/material';
 
 export default function List({ style, children, datalist, headerText, renderDataItem }) {
     return (
-        <Fragment>
+        <div style={style}>
             <Typography variant="h2">{headerText}</Typography>
             <Divider style={{ width: 'inherit' }} />
             <Stack direction={"column"} spacing={2}>
@@ -14,6 +14,6 @@ export default function List({ style, children, datalist, headerText, renderData
             {
                 children
             }
-        </Fragment>
+        </div>
     )
 }

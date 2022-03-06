@@ -1,6 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export const AuthContext = createContext({ isLoggedIn: false, userId: 0, signin: (name, surname, email, password) => { } });
+export const AuthContext = createContext({
+    userInfo: { isLoggedIn: false, userId: 0, userNameSurname: '' },
+    signin: (email, password) => { },
+    signup: (name, surname, email, password) => { },
+    logout: () => { }
+});
 
 export function useAuthContext() {
 
@@ -15,26 +21,26 @@ export function useAuthContext() {
 
 export const AuthProvider = ({ children }) => {
 
-    console.log("AuthProvider render")
+    const navigate = useNavigate();
 
-    const [isLoggedIn, setIsLoggedIn] = useState({ isLoggedIn: false });
-    const [userId, setUserId] = useState(0);
+    const [userInfo, setUserInfo] = useState({ isLoggedIn: false, userId: 0, userNameSurname: '' });
 
-    console.log("AuthProvider-isLoggedIn-", isLoggedIn);
+    console.log("AuthProvider-isLoggedIn-", userInfo);
 
     useEffect(() => {
 
         const accessToken = localStorage.getItem("accesstoken");
         const refreshToken = localStorage.getItem("refreshtoken");
 
-        if (accessToken !== null || refreshToken !== null) {
+        if (accessToken !== null && refreshToken !== null) {
             //check if accesstoken ok
-            setIsLoggedIn(true);
-            setUserId(10);
-            return;
+            setUserInfo(true);
+
+            navigate('/clients');
         }
-
-
+        else {
+            navigate('/');
+        }
 
         return () => {
 
@@ -47,8 +53,7 @@ export const AuthProvider = ({ children }) => {
      * @param {string} password 
      */
     async function signinHandler(email, password) {
-        // console.log("AuthProvider-signinhandler", email, password)
-        const response = await fetch("http://127.0.0.1:5000/signin", {
+        const response = await fetch("http://127.0.0.1:5000/api/v1/auth/signin", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -59,13 +64,15 @@ export const AuthProvider = ({ children }) => {
 
         const result = await response.json();
 
-        // console.log(result)
+        const { accessToken, refreshToken, userId, userNameSurname } = result;
 
-        localStorage.setItem("accesstoken", result.accessToken);
-        localStorage.setItem("refreshtoken", result.refreshToken);
+        localStorage.setItem("accesstoken", accessToken);
 
-        setIsLoggedIn(true);
-        setUserId(result.userId);
+        localStorage.setItem("refreshtoken", refreshToken);
+
+        setUserInfo({ isLoggedIn: true, userId, userNameSurname });
+
+        navigate('/clients');
     }
 
     /**
@@ -75,12 +82,27 @@ export const AuthProvider = ({ children }) => {
      * @param {string} email 
      * @param {string} password 
      */
-    async function signup(name, surname, email, password) {
+    async function signupHandler(name, surname, email, password) {
 
     }
 
+    async function logoutHandler() {
+        localStorage.removeItem("accesstoken");
+
+        localStorage.removeItem("refreshtoken");
+
+        setUserInfo({ isLoggedIn: false, userId: 0, userNameSurname: '' });
+
+        navigate('/');
+    }
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, userId, signin: signinHandler }} >
+        <AuthContext.Provider value={{
+            userInfo,
+            signin: signinHandler,
+            signup: signupHandler,
+            logout: logoutHandler
+        }} >
             {
                 children
             }

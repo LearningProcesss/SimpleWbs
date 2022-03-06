@@ -14,8 +14,6 @@ export default function ProjectCard({ children, styles, itemId }) {
 
     const navigate = useNavigate();
 
-    console.log("ProjectCard-itemId", itemId);
-
     const { isLoading, isError, data, error } = useQuery(`project_${itemId}`, () =>
         fetch(`http://127.0.0.1:5000/api/v1/projects/${itemId}`, {
             method: "GET",
@@ -69,8 +67,8 @@ export default function ProjectCard({ children, styles, itemId }) {
     const { clientId, createOn, name, vat, users, documents } = data;
 
     return (
-        <Card sx={{ display: 'flex' }}>
-            <CardContent sx={{ minWidth: 500 }}>
+        <Card sx={{ display: 'flex', justifyContent: "space-between",maxWidth: { xs: '100%', sm: '100%', md: '130rem', lg: '100%', xl: '100%' } }}>
+            <CardContent>
                 <Typography variant="h5">{name}</Typography>
                 <Typography variant="overline">{createOn}</Typography>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', marginTop: '1rem' }}>

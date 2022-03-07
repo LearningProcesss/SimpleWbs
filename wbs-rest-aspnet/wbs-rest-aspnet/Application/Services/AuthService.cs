@@ -122,7 +122,7 @@ public class AuthService : IAuthService
 
         //remove refreshtoken?
 
-        user.RefreshTokens.Add(new RefreshToken
+        context.RefreshTokens.Add(new RefreshToken
         {
             ExpiryDate = DateTime.Now.AddDays(30),
             Ts = DateTime.Now,
@@ -135,6 +135,8 @@ public class AuthService : IAuthService
 
         return new SignupResultDto
         {
+            UserId = user.UserId,
+            UserNameSurname = $"{user.Name} {user.Surname}",
             Success = true,
             AccessToken = accessToken,
             RefreshToken = refreshToken

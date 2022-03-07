@@ -45,7 +45,7 @@ function a11yProps(index) {
 
 export default function Login() {
 
-  const { signin } = useAuthContext();
+  const { signin, signup } = useAuthContext();
 
   const [value, setValue] = useState(0);
 
@@ -78,7 +78,7 @@ export default function Login() {
               <form onSubmit={handleSubmit}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
                   <TextField required id="email" label="Email" type="email" onChange={handleChange} />
-                  <TextField id="password" label="Password" type="password" onChange={handleChange} autoComplete="current-password" />
+                  <TextField required id="password" label="Password" type="password" onChange={handleChange} autoComplete="current-password" />
                   <Button variant="contained" type="submit">Signin</Button>
                 </div>
               </form>
@@ -87,13 +87,29 @@ export default function Login() {
           </Formik>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          {/* <div style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
-            <TextField required id="name" label="Name" type="text" onChange={handleFormInput} />
-            <TextField required id="surname" label="Surname" type="text" onChange={handleFormInput} />
-            <TextField required id="emailsignup" label="Email" type="email" onChange={handleFormInput} />
-            <TextField id="passwordsignup" label="Password" type="password" onChange={handleFormInput} autoComplete="current-password" />
-            <Button variant="contained" onClick={onSignupClick}>Signup</Button>
-          </div> */}
+          <Formik initialValues={{ email: '', password: '', name: '', surnmae: '' }} onSubmit={(values, { setSubmitting }) => {
+            signup(values.name, values.surname, values.email, values.password);
+          }}>
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
+                  <TextField required id="name" label="Name" type="text" onChange={handleChange} />
+                  <TextField required id="surname" label="Surname" type="text" onChange={handleChange} />
+                  <TextField required id="email" label="Email" type="email" onChange={handleChange} />
+                  <TextField required id="password" label="Password" type="password" onChange={handleChange} autoComplete="current-password" />
+                  <Button variant="contained" type="submit">Signup</Button>
+                </div>
+              </form>
+            )}
+          </Formik>
         </TabPanel>
       </Box>
     </Card>

@@ -18,10 +18,12 @@ namespace wbs_rest_aspnet.Controllers;
 public class UserController : ControllerBase
 {
     private WbsContext context;
+    private IAuthService authService;
 
-    public UserController(WbsContext context)
+    public UserController(WbsContext context, IAuthService authService)
     {
         this.context = context;
+        this.authService = authService;
     }
 
     [HttpGet(Name = "GetAllUsers")]
@@ -138,26 +140,21 @@ public class UserController : ControllerBase
             return BadRequest();
         }
 
-        Persistence.Models.User model = new Persistence.Models.User()
+        var signupResponse = authService.Signup(new InterfaceAdapters.Dtos.Requests.SignupDto
         {
-            Name = input.Name!,
-            Surname = input.Surname!,
-            Email = input.Email!
-        };
-
-        context.Users.Add(model);
-
-        context.SaveChanges();
+            Name = input.Name,
+            Surname = input.Surname,
+            Email = input.Email,
+            Password = input.Password
+        });
 
         OutputUserDto result = new OutputUserDto()
         {
-            UserId = model.UserId,
-            Name = model.Name,
-            Surname = model.Surname,
-            Email = model.Email
+            UserId = signupResponse.UserId,
+            UserNameSurname = signupResponse.UserNameSurname
         };
 
-        return CreatedAtAction(nameof(Create), new { id = model.UserId }, result);
+        return CreatedAtAction(nameof(Create), new { id = result.UserId }, result);
     }
 
     [HttpDelete("{id:int}")]
@@ -179,5 +176,34 @@ public class UserController : ControllerBase
         context.SaveChanges();
 
         return Ok();
+    }
+
+    [HttpPut("{id:int}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Update(int id, [FromBody] InputUserDtoPut input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        var user = context.Users.FirstOrDefault(user => user.UserId == id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        user.Name = input.Name!;
+        user.Surname = input.Surname!;
+        user.Email = input.Email!;
+
+        context.SaveChanges();
+
+        return NoContent();
     }
 }

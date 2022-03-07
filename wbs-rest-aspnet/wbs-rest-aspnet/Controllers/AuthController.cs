@@ -66,14 +66,6 @@ public class AuthController : ControllerBase
 
         var authResult = authService.Refresh(input);
 
-        // if (!authResult.Success)
-        // {
-        //     UnprocessableEntity();
-        // }
-
-        // Response.Headers.Add("X-Authorization-Token", authResult.AccessToken);
-        // Response.Headers.Add("X-Authorization-RefreshToken", authResult.RefreshToken);
-
         return Ok(authResult);
     }
 

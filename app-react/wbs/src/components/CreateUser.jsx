@@ -27,6 +27,8 @@ export default function CreateUser({ children, style, entityFatherId }) {
 
     const queryClient = useQueryClient();
 
+    const [userId, setUserId] = useState();
+
     const allClients = useQuery("allClients", () => {
         return fetch(`http://127.0.0.1:5000/api/v1/clients`, {
             method: "GET",
@@ -67,6 +69,8 @@ export default function CreateUser({ children, style, entityFatherId }) {
     }, {
         onSuccess: (data, variables, context) => {
             queryClient.invalidateQueries();
+
+            data.json().then(body => console.log("post creation", body));
         }
     });
     const createLinkClientUserMutation = useMutation(linkClientUser => {
@@ -100,15 +104,17 @@ export default function CreateUser({ children, style, entityFatherId }) {
     };
 
     const handleCloseWithCreate = () => {
-        // createUserMutation.mutate({ name: userName, clientToBeLinked: clientToBeLinked, usersToBeLinked: [...new Set(selectedUsers)] });
 
         createUserMutation.mutate({ name: userName, surname: userSurnName, email: userEmail, password: userPassword });
 
-        const uniqueClientsIdToDo = [...new Set(selectedClients)];
+        console.log("post creation in handler");
 
-        for (const userId of uniqueClientsIdToDo) {
-            createLinkClientUserMutation.mutate({ clientId: entity.clientId, userId: userId });
-        }
+
+        // const uniqueClientsIdToDo = [...new Set(selectedClients)];
+
+        // for (const userId of uniqueClientsIdToDo) {
+        //     createLinkClientUserMutation.mutate({ clientId: entity.clientId, userId: userId });
+        // }
 
         setOpen(false);
     }
@@ -139,14 +145,14 @@ export default function CreateUser({ children, style, entityFatherId }) {
                 <DialogTitle>Nuovo Utente</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Crea un nuovo Utente. Puoi anche assegnarlo a Clienti e Progetti.
+                        Crea un nuovo Utente.
                     </DialogContentText>
                     <TextField onChange={(e) => setUserName(e.target.value)} margin="dense" id="name" label="Name" type="text" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setUserName(e.target.value)} margin="dense" id="surname" label="Surname" type="text" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setUserName(e.target.value)} margin="dense" id="email" label="Email" type="email" fullWidth variant="standard" />
-                    <TextField onChange={(e) => setUserName(e.target.value)} margin="dense" id="password" label="Password" type="password" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setUserSurnName(e.target.value)} margin="dense" id="surname" label="Surname" type="text" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setEmail(e.target.value)} margin="dense" id="email" label="Email" type="email" fullWidth variant="standard" />
+                    <TextField onChange={(e) => setPassword(e.target.value)} margin="dense" id="password" label="Password" type="password" fullWidth variant="standard" />
                     <Divider style={{ marginTop: "1em" }} />
-                    <Accordion style={{ marginTop: "1em" }}>
+                    {/* <Accordion style={{ marginTop: "1em" }}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
@@ -179,7 +185,7 @@ export default function CreateUser({ children, style, entityFatherId }) {
                                 }
                             </FormGroup>
                         </AccordionDetails>
-                    </Accordion>
+                    </Accordion> */}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Annulla</Button>

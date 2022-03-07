@@ -140,7 +140,6 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Update(int id, [FromBody] InputProjectDtoPatch input)
     {
-        Console.WriteLine($"id: {id}");
         if (!ModelState.IsValid)
         {
             return BadRequest();

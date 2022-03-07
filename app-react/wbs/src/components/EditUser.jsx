@@ -57,32 +57,58 @@ export default function EditUser({ children, style, entity }) {
         })
     }
     );
-    const editProjectMutation = useMutation(editProjectData => {
-        return fetch(`http://127.0.0.1:5000/api/v1/projects/${entity.projectId}`, {
+    const editUserMutation = useMutation(editUserData => {
+        return fetch(`http://127.0.0.1:5000/api/v1/users/${entity.userId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(editProjectData)
+            body: JSON.stringify(editUserData)
         })
     }, {
         onSuccess: (data, variables, context) => {
             queryClient.invalidateQueries();
         }
     });
+    const createLinkClientUserMutation = useMutation(linkClientUser => {
+        return fetch(`http://127.0.0.1:5000/api/v1/clients/${linkClientUser.clientId}/users/${linkClientUser.userId}`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            // queryClient.invalidateQueries();
+        }
+    });
+    const deleteLinkClientUserMutation = useMutation(linkClientUser => {
+        return fetch(`http://127.0.0.1:5000/api/v1/clients/${linkClientUser.clientId}/users/${linkClientUser.userId}`, {
+            method: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            // queryClient.invalidateQueries();
+        }
+    });
+
     const createLinkProjectUserMutation = useMutation(linkProjectUser => {
         return fetch(`http://127.0.0.1:5000/api/v1/projects/${linkProjectUser.projectId}/users/${linkProjectUser.userId}`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(linkProjectUser)
+            }
         })
     }, {
         onSuccess: (data, variables, context) => {
-            queryClient.invalidateQueries();
+            // queryClient.invalidateQueries();
         }
     });
     const deleteLinkProjectUserMutation = useMutation(linkProjectUser => {
@@ -91,18 +117,19 @@ export default function EditUser({ children, style, entity }) {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(linkProjectUser)
+            }
         })
     }, {
         onSuccess: (data, variables, context) => {
-            queryClient.invalidateQueries();
+            // queryClient.invalidateQueries();
         }
     });
 
 
+
     const [name, setName] = useState(entity.name);
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedClients, setSelectedClients] = useState([]);
+    const [selectedProjects, setSelectedProjects] = useState([]);
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -115,36 +142,56 @@ export default function EditUser({ children, style, entity }) {
 
     const handleCloseWithEdit = () => {
 
-        editProjectMutation.mutate({ name: name });
+        // editUserMutation.mutate({ name: name });
 
-        console.log(selectedUsers);
+        const uniqueClientsIdToDo = [...new Set(selectedClients)];
 
-        const uniqueUsersIdToDo = [...new Set(selectedUsers)];
+        console.log("clients to do", uniqueClientsIdToDo)
 
-        for (const userId of uniqueUsersIdToDo) {
+        for (const clientId of uniqueClientsIdToDo) {
 
-            const index = entity.users.indexOf(parseInt(userId));
+            const index = entity.clients.indexOf(parseInt(clientId));
 
             if (parseInt(index) == -1) {
-                console.log(`id: ${userId} to be created - index ${index}`);
-                createLinkProjectUserMutation.mutate({ projectId: entity.projectId, userId: userId });
+                console.log(`id: ${clientId} to be created - index ${index}`);
+                createLinkClientUserMutation.mutate({ clientId: clientId, userId: entity.userId });
             }
             else {
-                console.log(`id: ${userId} to be deleted - index ${index}`);
-                deleteLinkProjectUserMutation.mutate({ projectId: entity.projectId, userId: userId })
+                console.log(`id: ${clientId} to be deleted - index ${index}`);
+                deleteLinkClientUserMutation.mutate({ clientId: clientId, userId: entity.userId });
             }
         }
 
-        setSelectedUsers([]);
+        const uniqueProjectsIdToDo = [...new Set(selectedProjects)];
+
+        console.log("projects to do", uniqueProjectsIdToDo)
+
+
+        for (const projectId of uniqueProjectsIdToDo) {
+
+            const index = entity.projects.indexOf(parseInt(projectId));
+
+            if (parseInt(index) == -1) {
+                console.log(`id: ${projectId} to be created - index ${index}`);
+                createLinkProjectUserMutation.mutate({ projectId: projectId, userId: entity.userId });
+            }
+            else {
+                console.log(`id: ${projectId} to be deleted - index ${index}`);
+                deleteLinkProjectUserMutation.mutate({ projectId: projectId, userId: entity.userId });
+            }
+        }
+
+        setSelectedClients([]);
+        setSelectedProjects([]);
         setOpen(false);
     }
 
-    const onChangeCheck = (e) => {
-        console.log(selectedUsers);
+    const onChangeSelectedClient = (e) => {
+        setSelectedClients(prevState => [...prevState, parseInt(e.target.id)]);
+    }
 
-        console.log("target check", e.target.id);
-
-        setSelectedUsers(prevState => [...prevState, parseInt(e.target.id)]);
+    const onChangeSelectedProject = (e) => {
+        setSelectedProjects(prevState => [...prevState, parseInt(e.target.id)]);
     }
 
     if (allClients.isLoading || allProjects.isLoading) {
@@ -180,7 +227,7 @@ export default function EditUser({ children, style, entity }) {
                             <FormGroup>
                                 {
                                     allClients.data !== null ? allClients.data.map((client, index) => (
-                                        <FormControlLabel key={client.clientId} control={<Checkbox id={'' + client.clientId} key={client.clientId} defaultChecked={entity.clients.indexOf(client.clientId) >= 0} onChange={onChangeCheck} />} label={`${client.name}`} />)) : null
+                                        <FormControlLabel key={client.clientId} control={<Checkbox id={'' + client.clientId} key={client.clientId} defaultChecked={entity.clients.indexOf(client.clientId) >= 0} onChange={onChangeSelectedClient} />} label={`${client.name}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>
@@ -197,7 +244,7 @@ export default function EditUser({ children, style, entity }) {
                             <FormGroup>
                                 {
                                     allProjects.data !== null ? allProjects.data.map((project, index) => (
-                                        <FormControlLabel key={project.projectId} control={<Checkbox id={'' + project.projectId} key={project.projectId} defaultChecked={entity.projects ? entity.projects.indexOf(project.projectId) >= 0 : false} onChange={onChangeCheck} />} label={`${project.name}`} />)) : null
+                                        <FormControlLabel key={project.projectId} control={<Checkbox id={'' + project.projectId} key={project.projectId} defaultChecked={entity.projects ? entity.projects.indexOf(project.projectId) >= 0 : false} onChange={onChangeSelectedProject} />} label={`${project.name}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>
@@ -207,7 +254,7 @@ export default function EditUser({ children, style, entity }) {
                     <Button onClick={handleClose}>Annulla</Button>
                     <LoadingButton
                         onClick={handleCloseWithEdit}
-                        loading={editProjectMutation.isLoading}
+                        loading={editUserMutation.isLoading}
                         loadingIndicator="Loading..."
                         variant="outlined"
                     >

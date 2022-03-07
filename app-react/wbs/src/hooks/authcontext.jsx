@@ -87,6 +87,30 @@ export const AuthProvider = ({ children }) => {
      * @param {string} password 
      */
     async function signupHandler(name, surname, email, password) {
+        const response = await fetch("http://127.0.0.1:5000/api/v1/auth/signup", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, surname, email, password })
+        });
+
+        const result = await response.json();
+
+        const { accessToken, refreshToken, userId, userNameSurname } = result;
+
+        localStorage.removeItem("accesstoken");
+
+        localStorage.removeItem("refreshtoken");
+
+        localStorage.setItem("accesstoken", accessToken);
+
+        localStorage.setItem("refreshtoken", refreshToken);
+
+        setUserInfo({ isLoggedIn: true, userId, userNameSurname });
+
+        navigate('/clients');
 
     }
 

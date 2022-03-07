@@ -12,13 +12,22 @@ using wbs_rest_aspnet.Application.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+// builder.Services.AddCors(options => options.AddDefaultPolicy(builder =>
+//     {
+//         builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("localhost:3000");
+//     })
+// );
+
+builder.Services.AddCors();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wbs", Version = "v1" });
@@ -35,10 +44,11 @@ builder.Services.AddSwaggerGen(c =>
                 // c.OperationFilter<AuthResponsesOperationFilter>();
             });
 
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-    {
-        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-    }));
+// builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+//     {
+//         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+// }));
+
 
 builder.Services.AddDbContext<WbsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection")));
 
@@ -52,7 +62,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    Console.WriteLine($"key ====> {builder.Configuration["Jwt:Key"]}");
     options.RequireHttpsMetadata = false;
     options.SaveToken = false;
     options.TokenValidationParameters = new TokenValidationParameters
@@ -61,16 +70,16 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
-        // ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        // ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:Key"])),
-        ClockSkew = TimeSpan.Zero
+        // ClockSkew = TimeSpan.Zero
     };
 
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
         {
+            Console.WriteLine($"jwt ==> {context.Exception.Message}");
+
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
                 context.Response.Headers.Add("IS-TOKEN-EXPIRED", "true");
@@ -84,40 +93,22 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("corsapp");
+app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials());
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-// app.Run(async (context) =>
-// {
-//     await Task.Run(() =>
-//     {
-//         var claimsIdentity = context.User.Identity as ClaimsIdentity;
-
-//         if (claimsIdentity != null)
-//         {
-//             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
-//             context.Request.Headers.Add("UserId", claim?.Value ?? "-1");
-
-//             Console.WriteLine($"UserId - {claim?.Value}");
-
-//             return;
-//         }
-
-//     });
-// });
-
 
 app.Run();

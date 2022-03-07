@@ -66,6 +66,10 @@ export const AuthProvider = ({ children }) => {
 
         const { accessToken, refreshToken, userId, userNameSurname } = result;
 
+        localStorage.removeItem("accesstoken");
+
+        localStorage.removeItem("refreshtoken");
+
         localStorage.setItem("accesstoken", accessToken);
 
         localStorage.setItem("refreshtoken", refreshToken);

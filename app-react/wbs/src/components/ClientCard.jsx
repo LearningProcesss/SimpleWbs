@@ -68,7 +68,7 @@ export default function ClientCard({ children, styles, itemId }) {
     const { clientId, createOn, name, vat, users, projects } = data;
 
     return (
-        <Card sx={{ display: 'flex', justifyContent: "space-between", maxWidth: { xs: '100%', sm: '100%', md: '30rem', lg: '100%', xl: '1rem' } }}>
+        <Card sx={{ display: 'flex', justifyContent: "space-between" }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent>
                     <Typography variant="h5">{name}</Typography>

@@ -301,11 +301,11 @@ public class ProjectController : ControllerBase
     [HttpDelete("{id:int}")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Delete(int id)
     {
-        var project = context.Projects.FirstOrDefault(project => project.ProjectId == id);
+        var project = context.Projects.Include(rel => rel.UsersProjects).Include(rel => rel.Documents).Include(rel => rel.Client).FirstOrDefault(project => project.ProjectId == id);
 
         if (project == null)
         {

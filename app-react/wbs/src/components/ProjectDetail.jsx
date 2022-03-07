@@ -41,11 +41,12 @@ export default function ProjectDetail() {
     const { createOn, name, users, documents } = data;
 
     function skeletonList() {
-        return Array.from(Array(10).keys(), (n) => (
-            <div style={{ margin: "1rem" }}>
-                <Skeleton variant="rectangular" width={100} height={100} />
-            </div>
-        ))
+        // return Array.from(Array(10).keys(), (n) => (
+        //     <div style={{ margin: "1rem" }}>
+        //         <Skeleton variant="rectangular" width={100} height={100} />
+        //     </div>
+        // ))
+        return <div></div>
     }
 
     return (

@@ -114,7 +114,7 @@ export default function CreateProject({ children, style, entityFatherId }) {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                Gli utenti selzionati saranno assegnati al progetto.
+                                Gli utenti selezionati saranno assegnati al progetto.
                             </Typography>
                             <FormGroup>
                                 {

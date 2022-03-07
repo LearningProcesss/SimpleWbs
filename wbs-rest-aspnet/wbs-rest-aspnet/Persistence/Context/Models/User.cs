@@ -12,5 +12,6 @@ public class User
     public int? CreateBy { get; set; }
     public virtual ICollection<UsersClients> UsersClients {get; set;}
     public virtual ICollection<UsersProjects> UsersProjects { get; set; }
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
 }

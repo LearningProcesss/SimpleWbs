@@ -150,7 +150,7 @@ public class ClientController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Delete(int id)
     {
-        var client = context.Clients.FirstOrDefault(client => client.ClientId == id);
+        var client = context.Clients.Include(rel => rel.UsersClients).Include(rel => rel.Projects).FirstOrDefault(client => client.ClientId == id);
 
         if (client == null)
         {
@@ -179,18 +179,18 @@ public class ClientController : ControllerBase
             return NotFound($"Client not found with id: {id}");
         }
 
-        Persistence.Models.UsersClients? relation = client.UsersClients.FirstOrDefault(rel => rel.ClientId == id && rel.UserId == userId);
-
-        if (relation != null)
-        {
-            return BadRequest();
-        }
-
         var user = context.Users.FirstOrDefault(user => user.UserId == userId);
 
         if (user == null)
         {
             return NotFound($"User not found with id: {userId}");
+        }
+
+        Persistence.Models.UsersClients? relation = client.UsersClients.FirstOrDefault(rel => rel.ClientId == id && rel.UserId == userId);
+
+        if (relation != null)
+        {
+            return BadRequest($"User wiht id: {userId} is already linked to client with id: {id}");
         }
 
         client.UsersClients.Add(new Persistence.Models.UsersClients { ClientId = id, UserId = userId });

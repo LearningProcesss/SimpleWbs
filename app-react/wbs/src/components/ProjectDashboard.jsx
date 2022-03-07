@@ -4,15 +4,15 @@ import { useAuthContext } from '../hooks/authcontext';
 import { Skeleton, Typography, Divider } from '@mui/material';
 
 const ListAsync = lazy(() => import('./List'));
-const CreateClientAsync = lazy(() => import('./CreateClient'));
-const ClientCardAsync = lazy(() => import('./ClientCard'));
+const CreateProjectAsync = lazy(() => import('./CreateProject'));
+const ProjectCardAsync = lazy(() => import('./ProjectCard'));
 
-export default function ClientDashboard() {
+export default function ProjectDashboard() {
 
     const { userInfo } = useAuthContext();
 
-    const { isLoading, isError, data, error } = useQuery("usersWithClientsId", () =>
-        fetch(`http://127.0.0.1:5000/api/v1/users/${userInfo.userId}/clients`, {
+    const { isLoading, isError, data, error } = useQuery("usersWithProjectsId", () =>
+        fetch(`http://127.0.0.1:5000/api/v1/users/${userInfo.userId}/projects`, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accesstoken'),
@@ -35,19 +35,23 @@ export default function ClientDashboard() {
         return <div></div>
     }
 
+    const { userId, projects } = data;
+
+    console.log(data);
+
     return (
         <div style={{ marginLeft: "1rem", marginRight: "1rem" }}>
-            <Typography sx={{ color: "" }} variant="h3">Dashboard Clienti</Typography>
+            <Typography sx={{ color: "" }} variant="h3">Dashboard Progetti</Typography>
             <div style={{ display: "flex", alignContent: "center", justifyContent: "space-between", marginTop: "1rem", marginBottom: "1rem" }}>
-                <Typography sx={{ mt: 1, mb: 1 }} variant="button" gutterBottom>Clienti {data.clients && data.clients.length}</Typography>
+                <Typography sx={{ mt: 1, mb: 1 }} variant="button" gutterBottom>Progetti {data.projects && data.projects.length}</Typography>
                 <Suspense fallback={<Skeleton variant="rectangular" width={100} height={100} />}>
-                    <CreateClientAsync />
+                    <CreateProjectAsync />
                 </Suspense>
             </div>
             <Divider sx={{ width: '100%' }} />
             <Suspense fallback={skeletonList()}>
-                <ListAsync style={{ marginTop: "1rem" }} headerText={""} datalist={data.clients} renderDataItem={(item, index) => (
-                    <ClientCardAsync key={item} itemId={item} />
+                <ListAsync style={{ marginTop: "1rem" }} headerText={""} datalist={projects} renderDataItem={(item, index) => (
+                    <ProjectCardAsync key={item} itemId={item} />
                 )}>
                 </ListAsync>
             </Suspense>

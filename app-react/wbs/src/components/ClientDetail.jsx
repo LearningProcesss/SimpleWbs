@@ -39,11 +39,12 @@ export default function ClientDetail() {
     const { createOn, name, vat, users, projects } = data;
 
     function skeletonList() {
-        return Array.from(Array(10).keys(), (n) => (
-            <div style={{ margin: "1rem" }}>
-                <Skeleton variant="rectangular" width={250} height={300} />
-            </div>
-        ))
+        // return Array.from(Array(10).keys(), (n) => (
+        //     <div style={{ margin: "1rem" }}>
+        //         <Skeleton variant="rectangular" width={250} height={300} />
+        //     </div>
+        // ))
+        return <div></div>
     }
 
     return (

@@ -1,14 +1,13 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import WorkIcon from '@mui/icons-material/Work';
+import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import { Badge, Card, CardActions, CardContent, Fab, Skeleton, Stack, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from "react-router-dom";
-import EditProject from './EditProject';
+import EditUser from './EditUser';
 
-export default function ProjectCard({ children, styles, itemId }) {
+export default function UserCard({ children, styles, itemId }) {
 
     console.log(itemId);
 
@@ -16,8 +15,8 @@ export default function ProjectCard({ children, styles, itemId }) {
 
     const navigate = useNavigate();
 
-    const { isLoading, isError, data, error } = useQuery(`project_${itemId}`, () =>
-        fetch(`http://127.0.0.1:5000/api/v1/projects/${itemId}`, {
+    const { isLoading, isError, data, error } = useQuery(`user_${itemId}`, () =>
+        fetch(`http://127.0.0.1:5000/api/v1/users/${itemId}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -26,8 +25,8 @@ export default function ProjectCard({ children, styles, itemId }) {
         }).then((res) => res.json())
     );
 
-    const deleteProject = useMutation(projectId => {
-        return fetch(`http://127.0.0.1:5000/api/v1/projects/${projectId}`, {
+    const deleteUser = useMutation(userId => {
+        return fetch(`http://127.0.0.1:5000/api/v1/users/${userId}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
@@ -41,12 +40,8 @@ export default function ProjectCard({ children, styles, itemId }) {
     });
 
     const onDeleteClickHandler = useCallback(() => {
-        deleteProject.mutate(itemId);
+        deleteUser.mutate(itemId);
     }, []);
-
-    const onCardClickHandler = useCallback(() => {
-        navigate(`/projects/${itemId}`);
-    });
 
     if (!itemId) {
         return null;
@@ -66,31 +61,31 @@ export default function ProjectCard({ children, styles, itemId }) {
         return <span>Error: {error.message}</span>
     }
 
-    const { clientId, createOn, name, vat, users, documents } = data;
+    const { userId, createOn, name, surname, email, clients, projects } = data;
 
     return (
         <Card sx={{ display: 'flex', justifyContent: "space-between" }}>
             <CardContent>
-                <Typography variant="h5">{name}</Typography>
+                <Typography variant="h5">{name} {surname} {email}</Typography>
                 <Typography variant="overline">{createOn}</Typography>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', marginTop: '1rem' }}>
-                    <Badge badgeContent={users != null ? users.length : 0} color="success">
-                        <PersonIcon color="action" />
+                    <Badge badgeContent={clients != null ? clients.length : 0} color="success">
+                        <CorporateFareIcon color="action" />
                     </Badge>
-                    <Badge badgeContent={documents != null ? documents.length : 0} color="success">
-                        <InsertDriveFileIcon color="action" />
+                    <Badge badgeContent={projects != null ? projects.length : 0} color="success">
+                        <WorkIcon color="action" />
                     </Badge>
                 </div>
             </CardContent>
             <CardActions>
                 <Stack style={{ margin: "1rem" }} direction="row" spacing={1}>
-                    <EditProject entity={data} />
-                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteProject.isLoading}>
+                    <EditUser entity={data} />
+                    <Fab color="error" aria-label="delete" onClick={onDeleteClickHandler} disabled={deleteUser.isLoading}>
                         <DeleteIcon />
                     </Fab>
-                    <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteProject.isLoading}>
+                    {/* <Fab color="success" aria-label="detail" onClick={onCardClickHandler} disabled={deleteProject.isLoading}>
                         <ArrowForwardIcon />
-                    </Fab>
+                    </Fab> */}
                 </Stack>
             </CardActions>
         </Card>

@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using wbs_rest_aspnet.Persistence.Context;
 using wbs_rest_aspnet.Persistence.Models;
 using wbs_rest_aspnet.Application.Dtos.Responses;
@@ -24,7 +25,7 @@ public class AuthService : IAuthService
 
     public LoginResultDto Signin(LoginDto input)
     {
-        var user = context.Users.FirstOrDefault(user => user.Email.ToLower() == input.Email.ToLower());
+        var user = context.Users.Include(rel => rel.RefreshTokens).FirstOrDefault(user => user.Email.ToLower() == input.Email.ToLower());
 
         if (user == null)
         {
@@ -49,6 +50,23 @@ public class AuthService : IAuthService
         var accessToken = GenerateAccessToken(user.UserId);
 
         var refreshToken = GenerateRefreshToken();
+
+        var salt = GetSecureSalt();
+
+        var refreshTokenHashed = HashUsingPbkdf2(refreshToken, salt);
+
+        //remove refreshtoken?
+
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            ExpiryDate = DateTime.Now.AddDays(30),
+            Ts = DateTime.Now,
+            UserId = user.UserId,
+            TokenHash = refreshTokenHashed,
+            TokenSalt = Convert.ToBase64String(salt)
+        });
+
+        context.SaveChanges();
 
         return new LoginResultDto
         {
@@ -98,9 +116,22 @@ public class AuthService : IAuthService
 
         var refreshToken = GenerateRefreshToken();
 
-        // salt = GetSecureSalt();
+        salt = GetSecureSalt();
 
-        // var refreshedTokenHashed = HashUsingPbkdf2(refreshToken, salt);
+        var refreshTokenHashed = HashUsingPbkdf2(refreshToken, salt);
+
+        //remove refreshtoken?
+
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            ExpiryDate = DateTime.Now.AddDays(30),
+            Ts = DateTime.Now,
+            UserId = user.UserId,
+            TokenHash = refreshTokenHashed,
+            TokenSalt = Convert.ToBase64String(salt)
+        });
+
+        context.SaveChanges();
 
         return new SignupResultDto
         {
@@ -112,6 +143,7 @@ public class AuthService : IAuthService
 
     public RefreshResultDto Refresh(RefreshDto input)
     {
+        // var refreshToken = context.RefreshTokens.FirstOrDefault(token => token.UserId == input.)
         // var refreshToken = await tasksDbContext.RefreshTokens.FirstOrDefaultAsync(o => o.UserId == refreshTokenRequest.UserId);
 
         // var response = new ValidateRefreshTokenResponse();
@@ -189,7 +221,6 @@ public class AuthService : IAuthService
 
         return refreshToken;
     }
-
     public string HashUsingPbkdf2(string password, byte[] salt)
     {
         byte[] derivedKey = KeyDerivation.Pbkdf2
@@ -197,7 +228,6 @@ public class AuthService : IAuthService
 
         return Convert.ToBase64String(derivedKey);
     }
-
     public byte[] GetSecureSalt()
     {
         return RandomNumberGenerator.GetBytes(32);

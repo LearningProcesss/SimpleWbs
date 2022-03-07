@@ -55,14 +55,14 @@ export default function Home() {
                             </Button>
                             <Button
                                 key={"projects"}
-                                // onClick={handleCloseNavMenu}
+                                onClick={() => navigate("/projects")}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 Projects
                             </Button>
                             <Button
                                 key={"users"}
-                                // onClick={handleCloseNavMenu}
+                                onClick={() => navigate("/users")}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 Users

@@ -6,7 +6,8 @@ dotnet tool install -g dotnet-aspnet-codegenerator
 
 dotnet-aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries -sqlite
 
-export PATH="$PATH:$HOME/.dotnet/tools/"
+<!-- export PATH="$PATH:$HOME/.dotnet/tools/" -->
+export PATH="$PATH:/home/nonrootuser/.dotnet/tools"
 
 dotnet add package Microsoft.EntityFrameworkCore
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer

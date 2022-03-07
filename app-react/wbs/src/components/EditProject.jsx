@@ -25,6 +25,8 @@ import {
 
 export default function EditProject({ children, style, entity }) {
 
+    console.log(entity);
+
     const queryClient = useQueryClient();
 
     const { isLoading, isError, data, error } = useQuery("allUsers", () => {
@@ -32,7 +34,8 @@ export default function EditProject({ children, style, entity }) {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('accesstoken')
             }
         }).then((res) => {
             const result = res.json();
@@ -54,7 +57,7 @@ export default function EditProject({ children, style, entity }) {
             queryClient.invalidateQueries();
         }
     });
-    const linkProjectUserMutation = useMutation(linkProjectUser => {
+    const createLinkProjectUserMutation = useMutation(linkProjectUser => {
         return fetch(`http://127.0.0.1:5000/api/v1/projects/${linkProjectUser.projectId}/users/${linkProjectUser.userId}`, {
             method: "PUT",
             headers: {
@@ -68,9 +71,24 @@ export default function EditProject({ children, style, entity }) {
             queryClient.invalidateQueries();
         }
     });
+    const deleteLinkProjectUserMutation = useMutation(linkProjectUser => {
+        return fetch(`http://127.0.0.1:5000/api/v1/projects/${linkProjectUser.projectId}/users/${linkProjectUser.userId}`, {
+            method: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(linkProjectUser)
+        })
+    }, {
+        onSuccess: (data, variables, context) => {
+            queryClient.invalidateQueries();
+        }
+    });
+
 
     const [name, setName] = useState(entity.name);
-    const [selectedUsers, setSelectedUsers] = useState(entity.users ? entity.users : []);
+    const [selectedUsers, setSelectedUsers] = useState([]);
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -81,18 +99,44 @@ export default function EditProject({ children, style, entity }) {
         setOpen(false);
     };
 
+    // const handleCloseWithEdit = () => {
+    //     editProjectMutation.mutate({ name: name });
+
+    //     setOpen(false);
+    // }
+
     const handleCloseWithEdit = () => {
+
         editProjectMutation.mutate({ name: name });
 
+        console.log(selectedUsers);
+
+        const uniqueUsersIdToDo = [...new Set(selectedUsers)];
+
+        for (const userId of uniqueUsersIdToDo) {
+
+            const index = entity.users.indexOf(parseInt(userId));
+
+            if (parseInt(index) == -1) {
+                console.log(`id: ${userId} to be created - index ${index}`);
+                createLinkProjectUserMutation.mutate({ projectId: entity.projectId, userId: userId });
+            }
+            else {
+                console.log(`id: ${userId} to be deleted - index ${index}`);
+                deleteLinkProjectUserMutation.mutate({ projectId: entity.projectId, userId: userId })
+            }
+        }
+
+        setSelectedUsers([]);
         setOpen(false);
     }
 
     const onChangeCheck = (e) => {
-        if (selectedUsers.indexOf(e.target.id) >= 0) {
-            return;
-        }
+        console.log(selectedUsers);
 
-        setSelectedUsers(items => [...items, e.target.id]);
+        console.log("target check", e.target.id);
+
+        setSelectedUsers(prevState => [...prevState, parseInt(e.target.id)]);
     }
 
     if (isLoading) {
@@ -128,7 +172,7 @@ export default function EditProject({ children, style, entity }) {
                             <FormGroup>
                                 {
                                     data !== null ? data.map((user, index) => (
-                                        <FormControlLabel key={user.userId} control={<Checkbox id={'' + user.userId} key={user.userId} defaultChecked={selectedUsers.indexOf(user.userId) >= 0} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
+                                        <FormControlLabel key={user.userId} control={<Checkbox id={'' + user.userId} key={user.userId} defaultChecked={entity.users.indexOf(user.userId) >= 0} onChange={onChangeCheck} />} label={`${user.name} ${user.surname} ${user.email}`} />)) : null
                                 }
                             </FormGroup>
                         </AccordionDetails>

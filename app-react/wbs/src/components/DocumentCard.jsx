@@ -99,7 +99,7 @@ export default function DocumentCard({ children, styles, itemId, fatherId }) {
 
     return (
         <>
-            <Card sx={{ display: 'flex', justifyContent: "space-between", maxWidth: { xs: '100%', sm: '100%', md: '30rem', lg: '100%', xl: '1rem' } }}>
+            <Card sx={{ display: 'flex', justifyContent: "space-between" }}>
                 <CardContent>
                     <Typography variant="h5">{fileName}</Typography>
                 </CardContent>

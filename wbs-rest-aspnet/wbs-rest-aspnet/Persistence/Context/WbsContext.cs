@@ -9,6 +9,7 @@ public class WbsContext : DbContext
     public DbSet<Client> Clients { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Document> Documents { get; set; }
+     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<UsersClients> UsersClients { get; set; }
     public DbSet<UsersProjects> UsersProjects { get; set; }
 
@@ -78,6 +79,28 @@ public class WbsContext : DbContext
                     .HasOne<Project>(sc => sc.Project)
                     .WithMany(s => s.UsersProjects)
                     .HasForeignKey(sc => sc.ProjectId);
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+            {
+               
+                entity.Property(e => e.ExpiryDate).HasColumnType("smalldatetime");
+                entity.Property(e => e.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(1000);
+                entity.Property(e => e.TokenSalt)
+                    .IsRequired()
+                    .HasMaxLength(1000);
+ 
+                entity.Property(e => e.Ts)
+                    .HasColumnType("smalldatetime");
+ 
+            });
+
+
+        modelBuilder.Entity<RefreshToken>()
+                    .HasOne<User>(refresh => refresh.User)
+                    .WithMany(user => user.RefreshTokens)
+                    .HasForeignKey(refresh => refresh.UserId);
 
         base.OnModelCreating(modelBuilder);
     }

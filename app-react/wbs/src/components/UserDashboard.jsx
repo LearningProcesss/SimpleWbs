@@ -4,16 +4,18 @@ import { useAuthContext } from '../hooks/authcontext';
 import { Skeleton, Typography, Divider } from '@mui/material';
 
 const ListAsync = lazy(() => import('./List'));
-const CreateClientAsync = lazy(() => import('./CreateClient'));
-const ClientCardAsync = lazy(() => import('./ClientCard'));
+const CreateUserAsync = lazy(() => import('./CreateUser'));
+const UserCardAsync = lazy(() => import('./UserCard'));
 
-export default function ClientDashboard() {
+export default function UsertDashboard() {
 
     const { userInfo } = useAuthContext();
 
-    const { isLoading, isError, data, error } = useQuery("usersWithClientsId", () =>
-        fetch(`http://127.0.0.1:5000/api/v1/users/${userInfo.userId}/clients`, {
+    const { isLoading, isError, data, error } = useQuery("allUsers", () =>
+        fetch(`http://127.0.0.1:5000/api/v1/users`, {
             method: "GET",
+            withCredentials: true,
+            credentials: 'include',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accesstoken'),
             }
@@ -35,19 +37,21 @@ export default function ClientDashboard() {
         return <div></div>
     }
 
+    console.log(data);
+
     return (
         <div style={{ marginLeft: "1rem", marginRight: "1rem" }}>
-            <Typography sx={{ color: "" }} variant="h3">Dashboard Clienti</Typography>
+            <Typography sx={{ color: "" }} variant="h3">Dashboard Utenti</Typography>
             <div style={{ display: "flex", alignContent: "center", justifyContent: "space-between", marginTop: "1rem", marginBottom: "1rem" }}>
-                <Typography sx={{ mt: 1, mb: 1 }} variant="button" gutterBottom>Clienti {data.clients && data.clients.length}</Typography>
+                <Typography sx={{ mt: 1, mb: 1 }} variant="button" gutterBottom>Utenti {data && data.length}</Typography>
                 <Suspense fallback={<Skeleton variant="rectangular" width={100} height={100} />}>
-                    <CreateClientAsync />
+                    <CreateUserAsync />
                 </Suspense>
             </div>
             <Divider sx={{ width: '100%' }} />
             <Suspense fallback={skeletonList()}>
-                <ListAsync style={{ marginTop: "1rem" }} headerText={""} datalist={data.clients} renderDataItem={(item, index) => (
-                    <ClientCardAsync key={item} itemId={item} />
+                <ListAsync style={{ marginTop: "1rem" }} headerText={""} datalist={data} renderDataItem={(item, index) => (
+                    <UserCardAsync key={item.userId} itemId={item.userId} />
                 )}>
                 </ListAsync>
             </Suspense>
